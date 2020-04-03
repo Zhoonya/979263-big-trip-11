@@ -2,18 +2,20 @@
 
 const EVENT_COUNT = 3;
 
+// Основное меню сайта
 const createSiteMenuTemplate = () => {
-  return (
-    `<nav class="trip-controls__trip-tabs  trip-tabs">
+  return (`
+    <nav class="trip-controls__trip-tabs  trip-tabs">
       <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
       <a class="trip-tabs__btn" href="#">Stats</a>
-    </nav>`
-  );
+    </nav>
+    `);
 };
 
+// Фильтры для путешествий
 const createFiltersTemplate = () => {
-  return (
-    `<form class="trip-filters" action="#" method="get">
+  return (`
+    <form class="trip-filters" action="#" method="get">
       <div class="trip-filters__filter">
         <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
         <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
@@ -27,33 +29,36 @@ const createFiltersTemplate = () => {
         <label class="trip-filters__filter-label" for="filter-past">Past</label>
       </div>
       <button class="visually-hidden" type="submit">Accept filter</button>
-    </form>`
-  );
+    </form>
+    `);
 };
 
+// Раздел информации о путешествии и маршрут
 const createTripInfoTemplate = () => {
-  return (
-    `<section class="trip-main__trip-info  trip-info">
+  return (`
+    <section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
         <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
         <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
       </div>
-    </section>`
-  );
+    </section>
+    `);
 };
 
+// Стоимость путешествия (раздел информации о путешествии)
 const createTripInfoCostTemplate = () => {
-  return (
-    `<p class="trip-info__cost">
+  return (`
+    <p class="trip-info__cost">
       Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
-    </p>`
-  );
+    </p>
+    `);
 };
 
+// Сортировка
 const createTripSortTemplate = () => {
-  return (
-    `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-      <span class="trip-sort__item  trip-sort__item--day"></span>
+  return (`
+    <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+      <span class="trip-sort__item  trip-sort__item--day">Day</span>
       <div class="trip-sort__item  trip-sort__item--event">
         <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event">
         <label class="trip-sort__btn" for="sort-event">Event</label>
@@ -71,31 +76,34 @@ const createTripSortTemplate = () => {
         </label>
       </div>
       <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
-    </form>`
-  );
+    </form>
+    `);
 };
 
+// Контейнер для всего путешествия
 const createTripDaysListTemplate = () => {
-  return (
-    `<ul class="trip-days"></ul>`
-  );
+  return (`
+    <ul class="trip-days"></ul>
+    `);
 };
 
+// День путешествия и контейнер для списка точек маршрута
 const createTripDayTemplate = () => {
-  return (
-    `<li class="trip-days__item  day">
-              <div class="day__info">
-                <span class="day__counter">1</span>
-                <time class="day__date" datetime="2019-03-19">MAR 19</time>
-              </div>
-
-              <ul class="trip-events__list"></ul>`
-  );
+  return (`
+    <li class="trip-days__item  day">
+      <div class="day__info">
+        <span class="day__counter">1</span>
+        <time class="day__date" datetime="2019-03-19">MAR 19</time>
+      </div>
+      <ul class="trip-events__list"></ul>
+    </li>
+    `);
 };
 
+// Точка маршрута
 const createEventTemplate = () => {
-  return (
-    `<li class="trip-events__item">
+  return (`
+    <li class="trip-events__item">
       <div class="event">
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/sightseeing.png" alt="Event type icon">
@@ -129,13 +137,14 @@ const createEventTemplate = () => {
           <span class="visually-hidden">Open event</span>
         </button>
       </div>
-    </li>`
-  );
+    </li>
+    `);
 };
 
+// Форма редактирования точки маршрута
 const createEditEventTemplate = () => {
-  return (
-    `<li class="trip-events__item">
+  return (`
+    <li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
@@ -283,39 +292,39 @@ const createEditEventTemplate = () => {
           </section>
         </section>
       </form>
-    </li>`
-  );
+    </li>
+    `);
 };
 
-const render = (container, template, place = 'beforeend') => {
+const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
 
-const siteHeaderElement = document.querySelector('.trip-main');
-const menuElement = siteHeaderElement.querySelector('#header-menu');
-const filtersElement = siteHeaderElement.querySelector('#header-filters');
+const siteHeaderElement = document.querySelector(`.trip-main`);
+const menuElement = siteHeaderElement.querySelector(`#header-menu`);
+const filtersElement = siteHeaderElement.querySelector(`#header-filters`);
 
-render(menuElement, createSiteMenuTemplate(), 'afterend');
-render(filtersElement, createFiltersTemplate(), 'afterend');
+render(menuElement, createSiteMenuTemplate(), `afterend`);
+render(filtersElement, createFiltersTemplate(), `afterend`);
 
-render(siteHeaderElement, createTripInfoTemplate(), 'afterbegin');
+render(siteHeaderElement, createTripInfoTemplate(), `afterbegin`);
 
-const tripInfoElement = siteHeaderElement.querySelector('.trip-info');
+const tripInfoElement = siteHeaderElement.querySelector(`.trip-info`);
 
 render(tripInfoElement, createTripInfoCostTemplate());
 
-const tripEventsElement = document.querySelector('.trip-events');
+const tripEventsElement = document.querySelector(`.trip-events`);
 
 render(tripEventsElement, createTripSortTemplate());
 render(tripEventsElement, createTripDaysListTemplate());
 
-const tripDaysListElement = tripEventsElement.querySelector('.trip-days');
+const tripDaysListElement = tripEventsElement.querySelector(`.trip-days`);
 
 render(tripDaysListElement, createTripDayTemplate());
 
-const tripDayElement = tripDaysListElement.querySelector('.trip-events__list');
+const tripDayElement = tripDaysListElement.querySelector(`.trip-events__list`);
 
-for (let i = 0; i < EVENT_COUNT; i++){
+for (let i = 0; i < EVENT_COUNT; i++) {
   render(tripDayElement, createEventTemplate());
 }
 
