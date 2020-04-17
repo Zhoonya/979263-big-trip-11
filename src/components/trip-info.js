@@ -1,7 +1,8 @@
-import {MONTH} from "../const";
+import {MONTH} from "../const.js";
+import {createElement} from "../utils.js";
 
 // Раздел информации о путешествии и маршрут
-export const createTripInfoTemplate = (dates, events) => {
+const createTripInfoTemplate = (dates, events) => {
   const getDestination = () => {
     if (events.length > 0) {
       const destinations = events.slice().map((item) => {
@@ -27,12 +28,35 @@ export const createTripInfoTemplate = (dates, events) => {
     }
   };
 
-  return (`
-    <section class="trip-main__trip-info  trip-info">
+  return (
+    `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
         <h1 class="trip-info__title">${getDestination()}</h1>
         <p class="trip-info__dates">${getDates()}</p>
       </div>
-    </section>
-    `);
+    </section>`
+  );
 };
+
+export default class TripDay {
+  constructor(dates, events) {
+    this._dates = dates;
+    this._events = events;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripInfoTemplate(this._dates, this._events);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,7 +1,4 @@
-import {TYPE} from "../const.js";
-import {DESTINATION} from "../const.js";
-import {OFFERS} from "../const.js";
-import {DESCRIPTION} from "../const.js";
+import {TYPE, DESTINATION, OFFERS, DESCRIPTION} from "../const.js";
 
 const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
