@@ -1,7 +1,9 @@
 // Сортировка
+import {createElement} from "../utils.js";
+
 export const createTripSortTemplate = () => {
-  return (`
-    <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+  return (
+    `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <span class="trip-sort__item  trip-sort__item--day">Day</span>
       <div class="trip-sort__item  trip-sort__item--event">
         <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event">
@@ -20,6 +22,27 @@ export const createTripSortTemplate = () => {
         </label>
       </div>
       <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
-    </form>
-    `);
+    </form>`
+  );
 };
+
+export default class SiteMenu {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripSortTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

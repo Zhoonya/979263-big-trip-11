@@ -1,8 +1,8 @@
 import {ARRIVAL} from "../const.js";
-import {formatDateTime} from "../utils.js";
+import {createElement, formatDateTime} from "../utils.js";
 
 // Форма редактирования точки маршрута
-export const createEditEventTemplate = (event) => {
+const createEventEditTemplate = (event) => {
   const {type, destination, price, offers, date, isFavorite} = event;
   const eventTitle = type[0].toUpperCase() + type.slice(1);
   const preposition = ARRIVAL.has(type) ? `in` : `to`;
@@ -11,49 +11,52 @@ export const createEditEventTemplate = (event) => {
 
   let offersList = offers.slice();
   const createOffers = () => {
+    const getIdName = (offer) => {
+      return offer.split(` `).join(`-`);
+    };
     if (offersList.length > 0) {
       offersList = offersList.map((item) => {
         if (item.isChecked) {
-          return (`
-          <div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-            <label class="event__offer-label" for="event-offer-luggage-1">
+          return (
+            `<div class="event__offer-selector">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getIdName(item.offer)}-1" type="checkbox" name="event-offer-${getIdName(item.offer)}" checked>
+            <label class="event__offer-label" for="event-offer-${getIdName(item.offer)}-1">
               <span class="event__offer-title">${item.offer}</span>
               &plus;
               &euro;&nbsp;<span class="event__offer-price">${item.price}</span>
             </label>
-          </div>
-        `);
+          </div>`
+          );
         } else {
-          return (`
-          <div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
-            <label class="event__offer-label" for="event-offer-luggage-1">
-              <span class="event__offer-title">${item.offer}</span>
-              &plus;
+          return (
+            `<div class="event__offer-selector">
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getIdName(item.offer)}-1" type="checkbox" name="event-offer-${getIdName(item.offer)}">
+              <label class="event__offer-label" for="event-offer-${getIdName(item.offer)}-1">
+                <span class="event__offer-title">${item.offer}</span>
+                &plus;
               &euro;&nbsp;<span class="event__offer-price">${item.price}</span>
             </label>
-          </div>
-        `);
+          </div>`
+          );
         }
       }).join(`\n`);
-      return (`
-        <section class="event__details">
+      return (
+        `<section class="event__details">
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
             <div class="event__available-offers">
             ${offersList}
             </div>
           </section>
-        </section>
-      `);
+        </section>`
+      );
     } else {
       return (``);
     }
   };
 
-  return (`
-    <li class="trip-events__item">
+  return (
+    `<li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
@@ -155,6 +158,28 @@ export const createEditEventTemplate = (event) => {
         </header>
         ${createOffers()}
       </form>
-    </li>
-    `);
+    </li>`
+  );
 };
+
+export default class EventEdit {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventEditTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

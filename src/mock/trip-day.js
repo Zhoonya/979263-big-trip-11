@@ -1,5 +1,4 @@
-import {castMonthFormat} from "../utils.js";
-import {castTimeFormat} from "../utils.js";
+import {castTimeFormat, castMonthFormat} from "../utils.js";
 
 const sortAscending = (a, b) => {
   if (a > b) {
