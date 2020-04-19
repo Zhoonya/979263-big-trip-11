@@ -22,12 +22,12 @@ const renderEvent = (tripEventsList, event) => {
     tripEventsList.replaceChild(eventComponent.getElement(), editEventComponent.getElement());
   };
 
-  const EscKeyDownHandler = (evt) => {
+  const handleKeyDown = (evt) => {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
       replaceEditToEvent();
-      document.removeEventListener(`keydown`, EscKeyDownHandler);
+      document.removeEventListener(`keydown`, handleKeyDown);
     }
   };
 
@@ -35,7 +35,7 @@ const renderEvent = (tripEventsList, event) => {
   const openButton = eventComponent.getElement().querySelector(`.event__rollup-btn`);
   openButton.addEventListener(`click`, () => {
     replaceEventToEdit();
-    document.addEventListener(`keydown`, EscKeyDownHandler);
+    document.addEventListener(`keydown`, handleKeyDown);
   });
 
   const editEventComponent = new EditEventComponent(event);
@@ -44,12 +44,12 @@ const renderEvent = (tripEventsList, event) => {
   editForm.addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceEditToEvent();
-    document.removeEventListener(`keydown`, EscKeyDownHandler);
+    document.removeEventListener(`keydown`, handleKeyDown);
   });
   closeButton.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     replaceEditToEvent();
-    document.removeEventListener(`keydown`, EscKeyDownHandler);
+    document.removeEventListener(`keydown`, handleKeyDown);
   });
 
   render(tripEventsList, eventComponent.getElement(), RenderPosition.BEFOREEND);
