@@ -1,5 +1,6 @@
 import {ARRIVAL} from "../const.js";
-import {createElement, formatDateTime} from "../utils.js";
+import {formatDateTime} from "../utils/common.js";
+import AbstractComponent from "./abstract-component.js";
 
 // Форма редактирования точки маршрута
 const createEventEditTemplate = (event) => {
@@ -162,24 +163,22 @@ const createEventEditTemplate = (event) => {
   );
 };
 
-export default class EventEdit {
+export default class EventEdit extends AbstractComponent {
   constructor(event) {
+    super();
+
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventEditTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  setSubmitHandler(handler) {
+    this.getElement().querySelector(`.event--edit`).addEventListener(`submit`, handler);
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
   }
 }

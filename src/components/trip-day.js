@@ -1,5 +1,5 @@
 import {MONTH} from "../const.js";
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
 // День путешествия и контейнер для списка точек маршрута
 const createTripDayTemplate = (day, date) => {
@@ -16,25 +16,15 @@ const createTripDayTemplate = (day, date) => {
   );
 };
 
-export default class TripDay {
+export default class TripDay extends AbstractComponent {
   constructor(day, date) {
+    super();
+
     this._day = day;
     this._date = date;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripDayTemplate(this._day, this._date);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
