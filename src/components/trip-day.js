@@ -3,15 +3,17 @@ import AbstractComponent from "./abstract-component.js";
 
 // День путешествия и контейнер для списка точек маршрута
 const createTripDayTemplate = (day, date) => {
-  const attributeDate = date;
-  const visuallyDate = `${MONTH[new Date(date).getMonth()]} ${new Date(date).getDate()}`;
+  const dayCounter = day ? `${day}` : ``;
+  const attributeDate = date ? `data-datetime="${date}"` : ``;
+  const dayDate = new Date(date);
+  const visuallyDate = date ? `${MONTH[dayDate.getMonth()]} ${dayDate.getDate()}` : ``;
   return (
     `<li class="trip-days__item  day">
       <div class="day__info">
-        <span class="day__counter">${day}</span>
+        <span class="day__counter">${dayCounter}</span>
         <time class="day__date" datetime="${attributeDate}">${visuallyDate}</time>
       </div>
-      <ul class="trip-events__list"  data-datatime="${attributeDate}"></ul>
+      <ul class="trip-events__list"  ${attributeDate}></ul>
     </li>`
   );
 };
