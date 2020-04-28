@@ -35,6 +35,24 @@ const getOffers = () => {
   return offersForEvent;
 };
 
+const offersByType = {
+  'taxi': getOffers(),
+  'bus': getOffers(),
+  'train': getOffers(),
+  'ship': getOffers(),
+  'transport': getOffers(),
+  'drive': getOffers(),
+  'flight': getOffers(),
+  'check-in': getOffers(),
+  'sightseeing': getOffers(),
+  'restaurant': getOffers()
+};
+
+export const getOffersByType = (type) => {
+  const offers = offersByType[type];
+  return offers;
+};
+
 let countdownDate = 0;
 const getRandomDate = () => {
   let startDate;
@@ -62,7 +80,7 @@ const getRandomDate = () => {
   };
 };
 
-const getDescription = () => {
+export const getDescription = () => {
   const lengthOfDescription = getRandomIntegerNumber(1, 5);
   const allSentences = DESCRIPTION.slice();
   const descriptionOfEvent = [];
@@ -78,26 +96,29 @@ const getDescription = () => {
   return descriptionOfEvent.join(` `);
 };
 
-const getPhotos = () => {
+export const getPhotos = () => {
   const numberOfPhotos = getRandomIntegerNumber(1, 6);
   return Array.from(Array(numberOfPhotos)).map(() => {
     return (`http://picsum.photos/248/152?r=${Math.random()}`);
   });
 };
 
-export const generateEvent = () => {
-  return {
+export const generateEvent = function () {
+  const event = {
     type: getRandomArrayItem(TYPE),
     destination: getRandomArrayItem(DESTINATION),
-    offers: getOffers(),
+    // offers: [],
     price: getRandomIntegerNumber(5, 200),
     date: getRandomDate(),
     information: {
       description: getDescription(),
       photos: getPhotos(),
     },
-    isFavorite: getRandomBooleanValue() ? `checked` : ``,
+    isFavorite: getRandomBooleanValue(),
   };
+  event.offers = getOffersByType(event.type);
+
+  return event;
 };
 
 export const generateEvents = (count) => {

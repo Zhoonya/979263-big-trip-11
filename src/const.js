@@ -1,7 +1,7 @@
 export const TYPE = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
 export const ARRIVAL = new Set([`check-in`, `sightseeing`, `restaurant`]);
 
-export const DESTINATION = [`Amsterdam`, `Chamonix`, `Geneva`];
+export const DESTINATION = [`Amsterdam`, `Chamonix`, `Geneva`, `Rotterdam`];
 
 export const OFFERS = [`Order Uber`, `Add luggage`, `Switch to comfort`, `Rent a car`, `Add breakfast`, `Book tickets`, `Lunch in city`];
 

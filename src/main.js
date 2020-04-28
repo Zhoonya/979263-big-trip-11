@@ -5,7 +5,7 @@ import TripInfoCostComponent from "./components/trip-info-cost.js";
 import {generateEvents} from "./mock/event.js";
 import {getListOfDates} from "./mock/trip-day.js";
 import {render, RenderPosition} from "./utils/render.js";
-import TripDaysController from "./controllers/trip-days.js";
+import TripDaysController from "./controllers/trip.js";
 
 const EVENT_COUNT = 10;
 
