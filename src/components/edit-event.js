@@ -221,7 +221,8 @@ export default class EventEdit extends AbstractSmartComponent {
     this._endDate = event.date.endDate;
     this._difference = event.date.difference;
 
-    this._flatpickr = null;
+    this._flatpickrStart = null;
+    this._flatpickrEnd = null;
 
     this._applyFlatpickr();
     this._subscribeOnEvents();
@@ -283,44 +284,49 @@ export default class EventEdit extends AbstractSmartComponent {
     this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, handler);
   }
 
-  _checkDates() {
-    if (this._startDate > this._endDate) {
-      this._endDate = this._startDate;
-    }
-    this.rerender();
-  }
-
   _applyFlatpickr() {
-    if (this._flatpickr) {
-      this._flatpickr.destroy();
-      this._flatpickr = null;
+    if (this._flatpickrStart) {
+      this._flatpickrStart.destroy();
+      this._flatpickrStart = null;
+    }
+    if (this._flatpickrEnd) {
+      this._flatpickrEnd.destroy();
+      this._flatpickrEnd = null;
     }
 
     const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
     const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
 
-
-    this._flatpickr = flatpickr(startDateElement, {
+    this._flatpickrStart = flatpickr(startDateElement, {
       altInput: true,
       altFormat: `d/m/y H:i`,
       allowInput: true,
       enableTime: true,
       [`time_24hr`]: true,
-      defaultDate: this._event.date.startDate || `today`,
+      defaultDate: this._startDate || `today`,
       onClose: (selectedDates) => {
-        this._startDate = selectedDates;
-        this._checkDates();
+        this._startDate = selectedDates[0] || this._endDate;
+        if (this._startDate > this._endDate) {
+          this._endDate = this._startDate;
+        }
         this._difference = this._endDate - this._startDate;
+        this._flatpickrEnd.setDate(this._endDate);
+        this._flatpickrEnd.set(`minDate`, this._startDate);
       },
     });
-    this._flatpickr = flatpickr(endDateElement, {
+
+    this._flatpickrEnd = flatpickr(endDateElement, {
       altInput: true,
       altFormat: `d/m/y H:i`,
       allowInput: true,
       enableTime: true,
       [`time_24hr`]: true,
       minDate: this._startDate,
-      defaultDate: this._event.date.endDate || `today`,
+      defaultDate: this._endDate || `today`,
+      onClose: (selectedDates) => {
+        this._endDate = selectedDates[0] || this._endDate;
+        this._difference = this._endDate - this._startDate;
+      },
     });
   }
 
