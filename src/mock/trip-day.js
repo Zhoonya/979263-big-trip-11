@@ -1,4 +1,4 @@
-import {castTimeFormat, castMonthFormat} from "../utils/common.js";
+import {formatYearMonthDate} from "../utils/common.js";
 
 const sortAscending = (a, b) => {
   if (a > b) {
@@ -16,10 +16,8 @@ const getUniqueItems = (arr) => {
 
 export const getListOfDates = (events) => {
   let dates = events.map((item) => {
-    const year = item.date.startDate.getFullYear();
-    const month = castMonthFormat(item.date.startDate.getMonth());
-    const day = castTimeFormat(item.date.startDate.getDate());
-    return (`${year}-${month}-${day}`);
+    const date = item.date.startDate;
+    return formatYearMonthDate(date);
   });
   dates = dates.sort(sortAscending);
   dates = getUniqueItems(dates);

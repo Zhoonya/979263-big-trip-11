@@ -1,30 +1,19 @@
-export const castTimeFormat = (value) => {
-  return String(value).padStart(2, `0`);
-};
-
-const castYearFormat = (value) => {
-  return String(value).slice(2);
-};
-
-export const castMonthFormat = (value) => {
-  return String(value + 1).padStart(2, `0`);
-};
+import moment from "moment";
 
 export const formatTime = (date) => {
-  const hours = castTimeFormat(date.getHours());
-  const minutes = castTimeFormat(date.getMinutes());
-
-  return `${hours}:${minutes}`;
+  return moment(date).format(`HH:mm`);
 };
 
 export const formatDateTime = (date) => {
-  const year = castYearFormat(date.getFullYear());
-  const month = castMonthFormat(date.getMonth());
-  const day = castTimeFormat(date.getDate());
-  const hours = castTimeFormat(date.getHours());
-  const minutes = castTimeFormat(date.getMinutes());
+  return moment(date).format(`DD/MM/YY HH:mm`);
+};
 
-  return `${day}/${month}/${year} ${hours}:${minutes}`;
+export const formatYearMonthDate = (date) => {
+  return moment(date).format(`YYYY-MM-DD`);
+};
+
+export const formatMonthDate = (date) => {
+  return moment(date).format(`MMM D`).toUpperCase();
 };
 
 export const formatDuration = (value) => {
