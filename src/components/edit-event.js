@@ -8,8 +8,8 @@ import "flatpickr/dist/flatpickr.min.css";
 
 // Форма редактирования точки маршрута
 const createEventEditTemplate = (event, options = {}) => {
-  const {price, isFavorite, date} = event;
-  const {type, offers, destination, information} = options;
+  const {price, isFavorite} = event;
+  const {type, offers, destination, information, date} = options;
 
   const eventTitle = type[0].toUpperCase() + type.slice(1);
   const preposition = ARRIVAL.has(type) ? `in` : `to`;
@@ -217,6 +217,9 @@ export default class EventEdit extends AbstractSmartComponent {
     this._destination = event.destination;
     this._informationDescription = event.information.description;
     this._informationPhotos = event.information.photos;
+    this._startDate = event.date.startDate;
+    this._endDate = event.date.endDate;
+    this._difference = event.date.difference;
 
     this._flatpickr = null;
 
@@ -233,6 +236,11 @@ export default class EventEdit extends AbstractSmartComponent {
         description: this._informationDescription,
         photos: this._informationPhotos,
       },
+      date: {
+        startDate: this._startDate,
+        endDate: this._endDate,
+        difference: this._difference,
+      }
     });
   }
 
@@ -254,6 +262,9 @@ export default class EventEdit extends AbstractSmartComponent {
     this._destination = event.destination;
     this._informationDescription = event.information.description;
     this._informationPhotos = event.information.photos;
+    this._startDate = event.date.startDate;
+    this._endDate = event.date.endDate;
+    this._difference = event.date.difference;
 
     this.rerender();
   }
@@ -272,6 +283,13 @@ export default class EventEdit extends AbstractSmartComponent {
     this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, handler);
   }
 
+  _checkDates() {
+    if (this._startDate > this._endDate) {
+      this._endDate = this._startDate;
+    }
+    this.rerender();
+  }
+
   _applyFlatpickr() {
     if (this._flatpickr) {
       this._flatpickr.destroy();
@@ -281,6 +299,7 @@ export default class EventEdit extends AbstractSmartComponent {
     const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
     const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
 
+
     this._flatpickr = flatpickr(startDateElement, {
       altInput: true,
       altFormat: `d/m/y H:i`,
@@ -288,14 +307,19 @@ export default class EventEdit extends AbstractSmartComponent {
       enableTime: true,
       [`time_24hr`]: true,
       defaultDate: this._event.date.startDate || `today`,
+      onClose: (selectedDates) => {
+        this._startDate = selectedDates;
+        this._checkDates();
+        this._difference = this._endDate - this._startDate;
+      },
     });
-
     this._flatpickr = flatpickr(endDateElement, {
       altInput: true,
       altFormat: `d/m/y H:i`,
       allowInput: true,
       enableTime: true,
       [`time_24hr`]: true,
+      minDate: this._startDate,
       defaultDate: this._event.date.endDate || `today`,
     });
   }
@@ -324,5 +348,6 @@ export default class EventEdit extends AbstractSmartComponent {
         this.rerender();
       }
     });
+
   }
 }
