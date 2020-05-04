@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from "moment/moment";
 
 export const formatTime = (date) => {
   return moment(date).format(`HH:mm`);
