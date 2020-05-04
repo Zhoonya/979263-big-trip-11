@@ -43,6 +43,11 @@ export default class SiteMenu extends AbstractComponent {
     return createTripSortTemplate();
   }
 
+  setSortType(sortType) {
+    this._currenSortType = sortType;
+    this.getElement().querySelector(`#sort-${this._currenSortType}`).checked = true;
+  }
+
   setSortTypeChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
       if (evt.target.tagName !== `LABEL`) {

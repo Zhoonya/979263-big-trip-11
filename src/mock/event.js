@@ -105,9 +105,9 @@ export const getPhotos = () => {
 
 export const generateEvent = function () {
   const event = {
+    id: String(new Date() + Math.random()),
     type: getRandomArrayItem(TYPE),
     destination: getRandomArrayItem(DESTINATION),
-    // offers: [],
     price: getRandomIntegerNumber(5, 200),
     date: getRandomDate(),
     information: {

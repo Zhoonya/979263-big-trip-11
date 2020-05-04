@@ -1,4 +1,4 @@
-import {render, RenderPosition, replace} from "../utils/render.js";
+import {render, remove, RenderPosition, replace} from "../utils/render.js";
 import EventComponent from "../components/event.js";
 import EditEventComponent from "../components/edit-event.js";
 
@@ -58,6 +58,12 @@ export default class PointController {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceEditToEvent();
     }
+  }
+
+  destroy() {
+    remove(this._editEventComponent);
+    remove(this._eventComponent);
+    document.removeEventListener(`keydown`, this._handleKeyDown);
   }
 
   _replaceEventToEdit() {

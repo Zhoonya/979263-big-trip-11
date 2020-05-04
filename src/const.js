@@ -17,3 +17,9 @@ export const DESCRIPTION = [`Lorem ipsum dolor sit amet, consectetur adipiscing 
   `In rutrum ac purus sit amet tempus.`];
 
 export const MONTH = [`jan`, `feb`, `mar`, `apr`, `may`, `jun`, `jul`, `aug`, `sep`, `oct`, `nov`, `dec`];
+
+export const FilterType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`,
+};
