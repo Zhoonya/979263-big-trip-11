@@ -6,22 +6,40 @@ import flatpickr from "flatpickr";
 
 import "flatpickr/dist/flatpickr.min.css";
 
+// const isValiddestination = (destination) => {
+//   if (destination.length > 0) {
+//     destination = destination[0].toUpperCase() + destination.slice(1);
+//     return DESTINATION.includes(destination);
+//   } else {
+//     return false;
+//   }
+// };
+
 // Форма редактирования точки маршрута
 const createEventEditTemplate = (event, options = {}) => {
-  const {price, isFavorite} = event;
-  const {type, offers, destination, information, date} = options;
+  const {isFavorite} = event;
+  const {type, offers, destination, information, date, price} = options;
 
   const eventTitle = type[0].toUpperCase() + type.slice(1);
   const preposition = ARRIVAL.has(type) ? `in` : `to`;
   const startTime = formatDateTime(date.startDate);
   const endTime = formatDateTime(date.endDate);
   const favoriteAttribute = isFavorite ? `checked` : ``;
+  // const saveButtonDisabletAttribute = isValiddestination(destination) ? `` : `disabled`;
+
 
   const createDestinationList = () => {
     return DESTINATION.slice().map((item) => {
       const destinationName = item[0].toUpperCase() + item.slice(1);
       return (`<option value="${destinationName}"></option>`);
     }).join(`\n`);
+  };
+
+  const createDestinationPattern = () => {
+    return DESTINATION.slice().map((item) => {
+      const destinationName = item[0].toUpperCase() + item.slice(1);
+      return (`${destinationName}`);
+    }).join(`|`);
   };
 
   const createTypesList = () => {
@@ -133,11 +151,13 @@ const createEventEditTemplate = (event, options = {}) => {
   };
 
   const createEventDetails = () => {
-    if (createOffers !== `` || createInformation !== ``) {
+    const offersMarkup = createOffers();
+    const informationMarkup = createInformation();
+    if (offersMarkup !== `` || informationMarkup !== ``) {
       return (
         `<section class="event__details">
-          ${createOffers()}
-          ${createInformation()}
+          ${offersMarkup}
+          ${informationMarkup}
         </section>`
       );
     } else {
@@ -163,7 +183,7 @@ const createEventEditTemplate = (event, options = {}) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${eventTitle} ${preposition}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" pattern="${createDestinationPattern()}" list="destination-list-1" required>
             <datalist id="destination-list-1">${createDestinationList()}</datalist>
           </div>
           <div class="event__field-group  event__field-group--time">
@@ -182,7 +202,7 @@ const createEventEditTemplate = (event, options = {}) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}" required  pattern="[1-9]+[0-9]*|0">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
@@ -203,6 +223,39 @@ const createEventEditTemplate = (event, options = {}) => {
   );
 };
 
+const parseFormData = (formData) => {
+  let offers = Array.from(document.querySelectorAll(`.event__offer-selector`));
+  if (offers.length > 0) {
+    offers = offers.map((item) => {
+      return {
+        offer: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-title`).textContent,
+        price: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-price`).textContent,
+        isChecked: item.querySelector(`.event__offer-checkbox`).checked,
+      };
+    });
+  } else {
+    offers = [];
+  }
+  const startDate = new Date(formData.get(`event-start-time`));
+  const endDate = new Date(formData.get(`event-end-time`));
+  return {
+    type: formData.get(`event-type`),
+    destination: formData.get(`event-destination`),
+    price: formData.get(`event-price`),
+    date: {
+      startDate,
+      endDate,
+      difference: (endDate - startDate) / 60000,
+    },
+    isFavorite: formData.get(`event-favorite`),
+    offers,
+    information: {
+      description: getDescription(),
+      photos: getPhotos(),
+    },
+  };
+};
+
 export default class EventEdit extends AbstractSmartComponent {
   constructor(event) {
     super();
@@ -211,6 +264,7 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._submitHandler = null;
     this._closeButtonClickHandler = null;
+    this._deleteButtonClickHandler = null;
 
     this._type = event.type;
     this._offers = event.offers;
@@ -220,6 +274,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._startDate = event.date.startDate;
     this._endDate = event.date.endDate;
     this._difference = event.date.difference;
+    this._price = event.price;
 
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
@@ -241,13 +296,28 @@ export default class EventEdit extends AbstractSmartComponent {
         startDate: this._startDate,
         endDate: this._endDate,
         difference: this._difference,
-      }
+      },
+      price: this._price,
     });
+  }
+
+  removeElement() {
+    if (this._flatpickrStart) {
+      this._flatpickrStart.destroy();
+      this._flatpickrStart = null;
+    }
+    if (this._flatpickrEnd) {
+      this._flatpickrEnd.destroy();
+      this._flatpickrEnd = null;
+    }
+
+    super.removeElement();
   }
 
   recoveryListeners() {
     this.setSubmitHandler(this._submitHandler);
     this.setCloseButtonClickHandler(this._closeButtonClickHandler);
+    this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     this._subscribeOnEvents();
   }
 
@@ -266,8 +336,16 @@ export default class EventEdit extends AbstractSmartComponent {
     this._startDate = event.date.startDate;
     this._endDate = event.date.endDate;
     this._difference = event.date.difference;
+    this._price = event.price;
 
     this.rerender();
+  }
+
+  getData() {
+    const form = this.getElement().querySelector(`.event--edit`);
+    const formData = new FormData(form);
+
+    return parseFormData(formData);
   }
 
   setSubmitHandler(handler) {
@@ -282,6 +360,15 @@ export default class EventEdit extends AbstractSmartComponent {
 
   setFavoritesButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, handler);
+  }
+
+  setDeleteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        handler();
+      });
+    this._deleteButtonClickHandler = handler;
   }
 
   _applyFlatpickr() {
@@ -344,16 +431,32 @@ export default class EventEdit extends AbstractSmartComponent {
 
     const destination = element.querySelector(`.event__input--destination`);
     const oldDestination = destination.value;
+    destination.addEventListener(`invalid`, () => {
+      if (destination.validity.patternMismatch) {
+        destination.setCustomValidity(`Please, select a city from the list`);
+      } else {
+        destination.setCustomValidity(``);
+      }
+    });
     destination.addEventListener(`change`, () => {
       this._destination = destination.value.trim();
       if (oldDestination !== this._destination) {
         this._informationDescription = getDescription();
         this._informationPhotos = getPhotos();
         this.rerender();
-      } else {
-        this.rerender();
       }
     });
 
+    const price = element.querySelector(`.event__input--price`);
+    price.addEventListener(`input`, () => {
+      this._price = price.value.trim();
+    });
+    price.addEventListener(`input`, () => {
+      if (price.validity.patternMismatch) {
+        price.setCustomValidity(`Please, enter a positive integer`);
+      } else {
+        price.setCustomValidity(``);
+      }
+    });
   }
 }

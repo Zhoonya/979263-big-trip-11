@@ -1,11 +1,31 @@
 import {render, remove, RenderPosition, replace} from "../utils/render.js";
 import EventComponent from "../components/event.js";
 import EditEventComponent from "../components/edit-event.js";
+import {DESTINATION, TYPE} from "../const.js";
+import {getDescription, getOffersByType, getPhotos} from "../mock/event.js";
 
-const Mode = {
+export const Mode = {
+  ADDING: `adding`,
   DEFAULT: `default`,
   EDIT: `edit`,
 };
+
+export const EmptyPoint = {
+  type: TYPE[0],
+  destination: DESTINATION[0],
+  price: ``,
+  date: {
+    startDate: new Date(),
+    endDate: new Date(),
+  },
+  information: {
+    description: getDescription(),
+    photos: getPhotos(),
+  },
+  isFavorite: false,
+};
+EmptyPoint.offers = getOffersByType(EmptyPoint.type);
+
 
 export default class PointController {
   constructor(container, onDataChange, onViewChange) {
@@ -16,11 +36,15 @@ export default class PointController {
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
     this._mode = Mode.DEFAULT;
+    this._pointModel = null;
+
   }
 
-  render(event) {
+  render(event, mode) {
+    this._pointModel = event;
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._editEventComponent;
+    this._mode = mode;
 
     this._eventComponent = new EventComponent(event);
     this._editEventComponent = new EditEventComponent(event);
@@ -37,20 +61,45 @@ export default class PointController {
     });
     this._editEventComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      this._replaceEditToEvent();
+      const data = this._editEventComponent.getData();
+      this._onDataChange(this, event, data);
       document.removeEventListener(`keydown`, this._handleKeyDown);
     });
+    this._editEventComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
     this._editEventComponent.setCloseButtonClickHandler((evt) => {
       evt.preventDefault();
       this._replaceEditToEvent();
       document.removeEventListener(`keydown`, this._handleKeyDown);
     });
 
-    if (oldEventEditComponent && oldEventComponent) {
-      replace(this._eventComponent, oldEventComponent);
-      replace(this._editEventComponent, oldEventEditComponent);
-    } else {
-      render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+    switch (mode) {
+      case Mode.DEFAULT:
+        if (oldEventEditComponent && oldEventComponent) {
+          replace(this._eventComponent, oldEventComponent);
+          replace(this._editEventComponent, oldEventEditComponent);
+          this._replaceEditToEvent();
+        } else {
+          render(this._container, this._eventComponent, RenderPosition.BEFOREEND);
+        }
+        break;
+      case Mode.ADDING:
+        if (oldEventEditComponent && oldEventComponent) {
+          remove(oldEventEditComponent);
+          remove(oldEventComponent);
+        }
+        this._onViewChange();
+        document.addEventListener(`keydown`, this._handleKeyDown);
+
+        render(this._container, this._editEventComponent, RenderPosition.BEFOREBEGIN);
+        this._editEventComponent.getElement().classList.add(`day`);
+        const editEventForm = this._editEventComponent.getElement().querySelector(`.event--edit`);
+        editEventForm.classList.add(`trip-events__item`);
+        editEventForm.querySelector(`.event__rollup-btn`).remove();
+        editEventForm.querySelector(`.event__favorite-btn`).remove();
+        editEventForm.querySelector(`.event__favorite-checkbox`).remove();
+        editEventForm.querySelector(`.event__reset-btn`).textContent = `Cancel`;
+
+        break;
     }
   }
 
@@ -60,11 +109,31 @@ export default class PointController {
     }
   }
 
+  removeAddingPoint() {
+    if (this._mode === Mode.ADDING) {
+      this.destroy();
+
+      const NewEventButton = document.querySelector(`.trip-main__event-add-btn`);
+      if (NewEventButton.disabled) {
+        NewEventButton.removeAttribute(`disabled`);
+      }
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   destroy() {
     remove(this._editEventComponent);
     remove(this._eventComponent);
     document.removeEventListener(`keydown`, this._handleKeyDown);
   }
+
+  getEditEventComponent() {
+    return this._editEventComponent;
+  }
+
 
   _replaceEventToEdit() {
     this._onViewChange();
@@ -75,14 +144,20 @@ export default class PointController {
   _replaceEditToEvent() {
     document.removeEventListener(`keydown`, this._handleKeyDown);
     this._editEventComponent.reset();
-    replace(this._eventComponent, this._editEventComponent);
+    if (document.contains(this._editEventComponent.getElement())) {
+      replace(this._eventComponent, this._editEventComponent);
+    }
     this._mode = Mode.DEFAULT;
+
   }
 
   _handleKeyDown(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
+      if (this._mode === Mode.ADDING) {
+        this._onDataChange(this, EmptyPoint, null);
+      }
       this._replaceEditToEvent();
       document.removeEventListener(`keydown`, this._handleKeyDown);
     }

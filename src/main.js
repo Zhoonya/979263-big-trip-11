@@ -1,5 +1,6 @@
 import SiteMenuComponent from "./components/site-menu.js";
 import FilterController from "./controllers/filter.js";
+import NewEventButtonComponent from "./components/new-event-button.js";
 // import TripInfoComponent from "./components/trip-info.js";
 // import TripInfoCostComponent from "./components/trip-info-cost.js";
 import PointsModel from "./models/points.js";
@@ -20,6 +21,9 @@ const siteHeaderElement = document.querySelector(`.trip-main`);
 const menuElement = siteHeaderElement.querySelector(`#header-menu`);
 const filtersElement = siteHeaderElement.querySelector(`#header-filters`);
 
+const newEventButtonComponent = new NewEventButtonComponent();
+render(siteHeaderElement, newEventButtonComponent, RenderPosition.BEFOREEND);
+
 render(menuElement, new SiteMenuComponent(), RenderPosition.AFTEREND);
 const filterController = new FilterController(filtersElement, pointsModel);
 filterController.render();
@@ -31,3 +35,7 @@ filterController.render();
 const tripController = new TripController(document.querySelector(`.trip-events`), pointsModel);
 tripController.render();
 
+newEventButtonComponent.setOnChange(() => {
+  tripController.createPoint();
+  newEventButtonComponent.getElement().setAttribute(`disabled`, `disabled`);
+});
