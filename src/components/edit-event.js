@@ -3,6 +3,7 @@ import {formatDateTime} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {getDescription, getPhotos, getOffersByType} from "../mock/event.js";
 import flatpickr from "flatpickr";
+import {encode} from "he";
 
 import "flatpickr/dist/flatpickr.min.css";
 
@@ -26,6 +27,7 @@ const createEventEditTemplate = (event, options = {}) => {
   const endTime = formatDateTime(date.endDate);
   const favoriteAttribute = isFavorite ? `checked` : ``;
   // const saveButtonDisabletAttribute = isValiddestination(destination) ? `` : `disabled`;
+  const destinationValue = encode(destination);
 
 
   const createDestinationList = () => {
@@ -183,7 +185,7 @@ const createEventEditTemplate = (event, options = {}) => {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${eventTitle} ${preposition}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" pattern="${createDestinationPattern()}" list="destination-list-1" required>
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationValue}" pattern="${createDestinationPattern()}" list="destination-list-1" required>
             <datalist id="destination-list-1">${createDestinationList()}</datalist>
           </div>
           <div class="event__field-group  event__field-group--time">

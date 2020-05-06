@@ -1,6 +1,7 @@
 import {ARRIVAL} from "../const.js";
 import {formatTime, formatDuration} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
+import {encode} from "he";
 
 // Точка маршрута
 const createEventTemplate = (event) => {
@@ -10,6 +11,7 @@ const createEventTemplate = (event) => {
   const startTime = formatTime(date.startDate);
   const endTime = formatTime(date.endDate);
   const duration = formatDuration(date.difference);
+  const destinationName = encode(destination);
 
   const createOffers = () => {
     if (offers.length > 0) {
@@ -50,7 +52,7 @@ const createEventTemplate = (event) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${eventTitle} ${preposition} ${destination}</h3>
+        <h3 class="event__title">${eventTitle} ${preposition} ${destinationName}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="2019-03-19T11:20">${startTime}</time>
