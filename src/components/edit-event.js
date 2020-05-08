@@ -436,6 +436,8 @@ export default class EventEdit extends AbstractSmartComponent {
     destination.addEventListener(`invalid`, () => {
       if (destination.validity.patternMismatch) {
         destination.setCustomValidity(`Please, select a city from the list`);
+      } else if (destination.validity.valueMissing) {
+        destination.setCustomValidity(`Please, select a city from the list`);
       } else {
         destination.setCustomValidity(``);
       }
@@ -453,9 +455,11 @@ export default class EventEdit extends AbstractSmartComponent {
     price.addEventListener(`input`, () => {
       this._price = price.value.trim();
     });
-    price.addEventListener(`input`, () => {
+    price.addEventListener(`invalid`, () => {
       if (price.validity.patternMismatch) {
         price.setCustomValidity(`Please, enter a positive integer`);
+      } else if (price.validity.valueMissing) {
+        price.setCustomValidity(`Please, enter a price`);
       } else {
         price.setCustomValidity(``);
       }
