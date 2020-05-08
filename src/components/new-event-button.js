@@ -16,4 +16,12 @@ export default class NewEventButton extends AbstractComponent {
       handler();
     });
   }
+
+  addDisabled() {
+    this.getElement().disabled = true;
+  }
+
+  removeDisabled() {
+    this.getElement().disabled = false;
+  }
 }

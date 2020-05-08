@@ -25,6 +25,8 @@
   "dependencies": {
     "flatpickr": "4.6.3",
     "moment": "2.25.1",
-    "he": "1.2.0"
+    "he": "1.2.0",
+    "chart.js": "2.9.3",
+    "chartjs-plugin-datalabels": "0.7.0"
   }
 }

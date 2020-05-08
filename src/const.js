@@ -1,5 +1,6 @@
 export const TYPE = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
 export const ARRIVAL = new Set([`check-in`, `sightseeing`, `restaurant`]);
+export const TRANSPORT = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`];
 
 export const DESTINATION = [`Amsterdam`, `Chamonix`, `Geneva`, `Rotterdam`];
 
@@ -23,3 +24,5 @@ export const FilterType = {
   FUTURE: `future`,
   PAST: `past`,
 };
+
+export const HIDDEN_CLASS = `visually-hidden`;

@@ -12,6 +12,7 @@ const createEventTemplate = (event) => {
   const endTime = formatTime(date.endDate);
   const duration = formatDuration(date.difference);
   const destinationName = encode(destination);
+  const priceValue = encode(String(price));
 
   const createOffers = () => {
     if (offers.length > 0) {
@@ -62,7 +63,7 @@ const createEventTemplate = (event) => {
           <p class="event__duration">${duration}</p>
         </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${price}</span>
+          &euro;&nbsp;<span class="event__price-value">${priceValue}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">

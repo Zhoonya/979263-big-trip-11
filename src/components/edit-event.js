@@ -28,7 +28,7 @@ const createEventEditTemplate = (event, options = {}) => {
   const favoriteAttribute = isFavorite ? `checked` : ``;
   // const saveButtonDisabletAttribute = isValiddestination(destination) ? `` : `disabled`;
   const destinationValue = encode(destination);
-
+  const priceValue = encode(String(price));
 
   const createDestinationList = () => {
     return DESTINATION.slice().map((item) => {
@@ -204,7 +204,7 @@ const createEventEditTemplate = (event, options = {}) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}" required  pattern="[1-9]+[0-9]*|0">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${priceValue}" required  pattern="[1-9]+[0-9]*|0">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>

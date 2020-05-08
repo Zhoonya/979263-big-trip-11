@@ -5,6 +5,7 @@ import TripDaysListComponent from "../components/trip-days-list.js";
 import TripDayComponent from "../components/trip-day.js";
 import PointController, {Mode as PointControllerMode, EmptyPoint} from "./point.js";
 import {getListOfDates} from "../mock/trip-day.js";
+import {HIDDEN_CLASS} from "../const.js";
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
@@ -53,6 +54,22 @@ export default class TripController {
     this._pointsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
+  hide() {
+    this._container.classList.add(HIDDEN_CLASS);
+  }
+
+  show() {
+    this._pointControllers.forEach((item) => {
+      if (item.removeAddingPoint()) {
+        this._creatingPoint = null;
+      }
+    });
+
+    this._container.classList.remove(HIDDEN_CLASS);
+
+    this._updatePoints();
+  }
+
   render() {
     const points = this._pointsModel.getPoints();
 
@@ -77,9 +94,9 @@ export default class TripController {
   }
 
   _onDataChange(pointController, oldData, newData) {
-    const NewEventButton = document.querySelector(`.trip-main__event-add-btn`);
-    if (NewEventButton.disabled) {
-      NewEventButton.removeAttribute(`disabled`);
+    const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
+    if (newEventButton.disabled) {
+      newEventButton.removeAttribute(`disabled`);
     }
 
     if (oldData === EmptyPoint) {
@@ -178,6 +195,11 @@ export default class TripController {
   }
 
   _onFilterChange() {
+    this._pointControllers.forEach((item) => {
+      if (item.removeAddingPoint()) {
+        this._creatingPoint = null;
+      }
+    });
     this._updatePoints();
   }
 }
