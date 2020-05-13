@@ -16,7 +16,7 @@ const getUniqueItems = (arr) => {
 
 export const getListOfDates = (events) => {
   let dates = events.map((item) => {
-    const date = item.date.startDate;
+    const date = item.startDate;
     return formatYearMonthDate(date);
   });
   dates = dates.sort(sortAscending);

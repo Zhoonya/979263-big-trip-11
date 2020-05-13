@@ -1,13 +1,12 @@
-import {TYPE, ARRIVAL, DESTINATION} from "../const.js";
+import {TYPE, ARRIVAL, DESTINATION, OFFERS} from "../const.js";
 import {formatDateTime} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {getDescription, getPhotos, getOffersByType} from "../mock/event.js";
 import flatpickr from "flatpickr";
 import {encode} from "he";
 
 import "flatpickr/dist/flatpickr.min.css";
 
-// const isValiddestination = (destination) => {
+// const isValidDestination = (destination) => {
 //   if (destination.length > 0) {
 //     destination = destination[0].toUpperCase() + destination.slice(1);
 //     return DESTINATION.includes(destination);
@@ -16,30 +15,51 @@ import "flatpickr/dist/flatpickr.min.css";
 //   }
 // };
 
+const getOffersByType = (type) => {
+  return OFFERS.slice().filter((item) => item.type === type)[0].offers;
+};
+
+const getDescription = (destination) => {
+  const filteredDestination = DESTINATION.slice().filter((item) => item.name === destination)[0];
+  if (filteredDestination !== undefined) {
+    return filteredDestination.description;
+  } else {
+    return ``;
+  }
+};
+
+const getPhotos = (destination) => {
+  const filteredDestination = DESTINATION.slice().filter((item) => item.name === destination)[0];
+  if (filteredDestination !== undefined) {
+    return filteredDestination.pictures;
+  } else {
+    return [];
+  }
+};
+
 // Форма редактирования точки маршрута
 const createEventEditTemplate = (event, options = {}) => {
-  const {isFavorite} = event;
-  const {type, offers, destination, information, date, price} = options;
+  const {type, offers, destination, startDate, endDate, price, isFavorite} = options;
 
   const eventTitle = type[0].toUpperCase() + type.slice(1);
   const preposition = ARRIVAL.has(type) ? `in` : `to`;
-  const startTime = formatDateTime(date.startDate);
-  const endTime = formatDateTime(date.endDate);
+  const startTime = formatDateTime(startDate);
+  const endTime = formatDateTime(endDate);
   const favoriteAttribute = isFavorite ? `checked` : ``;
-  // const saveButtonDisabletAttribute = isValiddestination(destination) ? `` : `disabled`;
-  const destinationValue = encode(destination);
+  // const saveButtonDisabletAttribute = isValidDestination(destination) ? `` : `disabled`;
+  const destinationValue = encode(destination.name);
   const priceValue = encode(String(price));
 
   const createDestinationList = () => {
     return DESTINATION.slice().map((item) => {
-      const destinationName = item[0].toUpperCase() + item.slice(1);
+      const destinationName = item.name[0].toUpperCase() + item.name.slice(1);
       return (`<option value="${destinationName}"></option>`);
     }).join(`\n`);
   };
 
   const createDestinationPattern = () => {
     return DESTINATION.slice().map((item) => {
-      const destinationName = item[0].toUpperCase() + item.slice(1);
+      const destinationName = item.name[0].toUpperCase() + item.name.slice(1);
       return (`${destinationName}`);
     }).join(`|`);
   };
@@ -80,19 +100,21 @@ const createEventEditTemplate = (event, options = {}) => {
     );
   };
 
-  let offersList = offers.slice();
+  // let offersList = OFFERS.slice().filter((item) => item.type === type)[0].offers;
+  let offersList = getOffersByType(type);
   const createOffers = () => {
     const getIdName = (offer) => {
       return offer.split(` `).join(`-`);
     };
+    const checkedOffers = offers.map((item) => item.title);
     if (offersList.length > 0) {
       offersList = offersList.map((item) => {
-        if (item.isChecked) {
+        if (checkedOffers.includes(item.title)) {
           return (
             `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getIdName(item.offer)}-1" type="checkbox" name="event-offer-${getIdName(item.offer)}" checked>
-            <label class="event__offer-label" for="event-offer-${getIdName(item.offer)}-1">
-              <span class="event__offer-title">${item.offer}</span>
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getIdName(item.title)}-1" type="checkbox" name="event-offer-${getIdName(item.title)}" checked>
+            <label class="event__offer-label" for="event-offer-${getIdName(item.title)}-1">
+              <span class="event__offer-title">${item.title}</span>
               &plus;
               &euro;&nbsp;<span class="event__offer-price">${item.price}</span>
             </label>
@@ -101,9 +123,9 @@ const createEventEditTemplate = (event, options = {}) => {
         } else {
           return (
             `<div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getIdName(item.offer)}-1" type="checkbox" name="event-offer-${getIdName(item.offer)}">
-              <label class="event__offer-label" for="event-offer-${getIdName(item.offer)}-1">
-                <span class="event__offer-title">${item.offer}</span>
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getIdName(item.title)}-1" type="checkbox" name="event-offer-${getIdName(item.title)}">
+              <label class="event__offer-label" for="event-offer-${getIdName(item.title)}-1">
+                <span class="event__offer-title">${item.title}</span>
                 &plus;
               &euro;&nbsp;<span class="event__offer-price">${item.price}</span>
             </label>
@@ -125,13 +147,15 @@ const createEventEditTemplate = (event, options = {}) => {
   };
 
   const createInformation = () => {
-    if (DESTINATION.includes(destination)) {
-      const description = information.description;
+    const allDestinations = DESTINATION.slice().map((item) => item.name);
+
+    if (allDestinations.includes(destination.name)) {
+      const description = destination.description;
       const createPhotos = () => {
-        const photos = information.photos;
+        const photos = destination.pictures;
         return photos.map((item) => {
           return (
-            `<img class="event__photo" src="${item}" alt="Event photo">`
+            `<img class="event__photo" src="${item.src}" alt="Event photo">`
           );
         }).join(`\n`);
       };
@@ -228,11 +252,10 @@ const createEventEditTemplate = (event, options = {}) => {
 const parseFormData = (formData) => {
   let offers = Array.from(document.querySelectorAll(`.event__offer-selector`));
   if (offers.length > 0) {
-    offers = offers.map((item) => {
+    offers = offers.filter((item) => item.querySelector(`.event__offer-checkbox`).checked).map((item) => {
       return {
-        offer: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-title`).textContent,
+        title: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-title`).textContent,
         price: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-price`).textContent,
-        isChecked: item.querySelector(`.event__offer-checkbox`).checked,
       };
     });
   } else {
@@ -240,21 +263,20 @@ const parseFormData = (formData) => {
   }
   const startDate = new Date(formData.get(`event-start-time`));
   const endDate = new Date(formData.get(`event-end-time`));
+  const destinationName = formData.get(`event-destination`);
   return {
     type: formData.get(`event-type`),
-    destination: formData.get(`event-destination`),
-    price: formData.get(`event-price`),
-    date: {
-      startDate,
-      endDate,
-      difference: (endDate - startDate) / 60000,
+    destination: {
+      name: destinationName,
+      description: getDescription(destinationName),
+      pictures: getPhotos(destinationName),
     },
+    price: formData.get(`event-price`),
+    startDate,
+    endDate,
+    difference: endDate - startDate,
     isFavorite: formData.get(`event-favorite`),
     offers,
-    information: {
-      description: getDescription(),
-      photos: getPhotos(),
-    },
   };
 };
 
@@ -270,13 +292,14 @@ export default class EventEdit extends AbstractSmartComponent {
 
     this._type = event.type;
     this._offers = event.offers;
-    this._destination = event.destination;
-    this._informationDescription = event.information.description;
-    this._informationPhotos = event.information.photos;
-    this._startDate = event.date.startDate;
-    this._endDate = event.date.endDate;
-    this._difference = event.date.difference;
+    this._destination = event.destination.name;
+    this._informationDescription = event.destination.description;
+    this._informationPhotos = event.destination.pictures;
+    this._startDate = event.startDate;
+    this._endDate = event.endDate;
+    this._difference = this._endDate - this._startDate;
     this._price = event.price;
+    this._isFavorite = event.isFavorite;
 
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
@@ -289,17 +312,16 @@ export default class EventEdit extends AbstractSmartComponent {
     return createEventEditTemplate(this._event, {
       type: this._type,
       offers: this._offers,
-      destination: this._destination,
-      information: {
+      destination: {
+        name: this._destination,
         description: this._informationDescription,
-        photos: this._informationPhotos,
+        pictures: this._informationPhotos,
       },
-      date: {
-        startDate: this._startDate,
-        endDate: this._endDate,
-        difference: this._difference,
-      },
+      startDate: this._startDate,
+      endDate: this._endDate,
+      difference: this._difference,
       price: this._price,
+      isFavorite: this._isFavorite,
     });
   }
 
@@ -332,13 +354,14 @@ export default class EventEdit extends AbstractSmartComponent {
     const event = this._event;
     this._offers = event.offers;
     this._type = event.type;
-    this._destination = event.destination;
-    this._informationDescription = event.information.description;
-    this._informationPhotos = event.information.photos;
-    this._startDate = event.date.startDate;
-    this._endDate = event.date.endDate;
-    this._difference = event.date.difference;
+    this._destination = event.destination.name;
+    this._informationDescription = event.destination.description;
+    this._informationPhotos = event.destination.pictures;
+    this._startDate = event.startDate;
+    this._endDate = event.endDate;
+    this._difference = event.difference;
     this._price = event.price;
+    this._isFavorite = event.isFavorite;
 
     this.rerender();
   }
@@ -360,9 +383,9 @@ export default class EventEdit extends AbstractSmartComponent {
     this._closeButtonClickHandler = handler;
   }
 
-  setFavoritesButtonClickHandler(handler) {
-    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, handler);
-  }
+  // setFavoritesButtonClickHandler(handler) {
+  //   this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, handler);
+  // }
 
   setDeleteButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__reset-btn`)
@@ -426,7 +449,6 @@ export default class EventEdit extends AbstractSmartComponent {
     types.forEach((item) => {
       item.addEventListener(`click`, (evt) => {
         this._type = evt.target.textContent.toLowerCase();
-        this._offers = getOffersByType(this._type);
         this.rerender();
       });
     });
@@ -445,8 +467,8 @@ export default class EventEdit extends AbstractSmartComponent {
     destination.addEventListener(`change`, () => {
       this._destination = destination.value.trim();
       if (oldDestination !== this._destination) {
-        this._informationDescription = getDescription();
-        this._informationPhotos = getPhotos();
+        this._informationDescription = getDescription(this._destination);
+        this._informationPhotos = getPhotos(this._destination);
         this.rerender();
       }
     });
@@ -463,6 +485,11 @@ export default class EventEdit extends AbstractSmartComponent {
       } else {
         price.setCustomValidity(``);
       }
+    });
+
+    element.querySelector(`.event__favorite-checkbox`).addEventListener(`change`, () => {
+      this._isFavorite = !this._isFavorite;
+      this.rerender();
     });
   }
 }

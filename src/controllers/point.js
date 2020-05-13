@@ -1,8 +1,10 @@
 import {render, remove, RenderPosition, replace} from "../utils/render.js";
 import EventComponent from "../components/event.js";
 import EditEventComponent from "../components/edit-event.js";
-import {DESTINATION, TYPE} from "../const.js";
-import {getDescription, getOffersByType, getPhotos} from "../mock/event.js";
+import {TYPE} from "../const.js";
+// import {OFFERS} from "../const.js";
+// import PointsModel from "../models/points";
+// import {getDescription, getOffersByType, getPhotos} from "../mock/event.js";
 
 export const Mode = {
   ADDING: `adding`,
@@ -12,20 +14,17 @@ export const Mode = {
 
 export const EmptyPoint = {
   type: TYPE[0],
-  destination: DESTINATION[0],
+  destination: {
+    name: ``,
+    description: ``,
+    photos: [],
+  },
   price: ``,
-  date: {
-    startDate: new Date(),
-    endDate: new Date(),
-  },
-  information: {
-    description: getDescription(),
-    photos: getPhotos(),
-  },
+  startDate: new Date(),
+  endDate: new Date(),
   isFavorite: false,
+  offers: [],
 };
-EmptyPoint.offers = getOffersByType(EmptyPoint.type);
-
 
 export default class PointController {
   constructor(container, onDataChange, onViewChange) {
@@ -54,11 +53,11 @@ export default class PointController {
       document.addEventListener(`keydown`, this._handleKeyDown);
     });
 
-    this._editEventComponent.setFavoritesButtonClickHandler(() => {
-      this._onDataChange(this, event, Object.assign({}, event, {
-        isFavorite: !event.isFavorite,
-      }));
-    });
+    // this._editEventComponent.setFavoritesButtonClickHandler(() => {
+    //   this._onDataChange(this, event, Object.assign({}, event, {
+    //     isFavorite: !event.isFavorite,
+    //   }));
+    // });
     this._editEventComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
       const data = this._editEventComponent.getData();

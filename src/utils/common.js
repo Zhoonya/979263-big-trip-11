@@ -16,7 +16,8 @@ export const formatMonthDate = (date) => {
   return moment(date).format(`MMM D`).toUpperCase();
 };
 
-export const formatDuration = (value) => {
+export const formatDuration = (difference) => {
+  const value = Math.floor(difference / 60000);
   if (value < 60) {
     return (`${value}M`);
   } else if (value >= 60 && value < 1440) {

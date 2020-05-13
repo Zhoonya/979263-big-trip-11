@@ -2,18 +2,19 @@ import {FilterType} from "../const.js";
 
 export const getPastPoints = (points, nowDate) => {
   return points.filter((point) => {
-    return point.date.endDate.getDate() < nowDate.getDate() &&
-      point.date.endDate.getMonth() <= nowDate.getMonth() &&
-      point.date.endDate.getFullYear() <= nowDate.getFullYear();
+    return point.endDate.getDate() < nowDate.getDate() &&
+      point.endDate.getMonth() <= nowDate.getMonth() &&
+      point.endDate.getFullYear() <= nowDate.getFullYear();
   });
 };
 
 export const getFuturePoints = (points, nowDate) => {
 
   return points.filter((point) => {
-    return point.date.startDate.getDate() > nowDate.getDate() &&
-      point.date.startDate.getMonth() >= nowDate.getMonth() &&
-      point.date.startDate.getFullYear() >= nowDate.getFullYear();
+
+    return point.startDate.getDate() > nowDate.getDate() &&
+      point.startDate.getMonth() >= nowDate.getMonth() &&
+      point.startDate.getFullYear() >= nowDate.getFullYear();
   });
 };
 

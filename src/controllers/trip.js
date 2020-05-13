@@ -13,7 +13,7 @@ const getSortedEvents = (events, sortType) => {
 
   switch (sortType) {
     case SortType.TIME:
-      sortedEvents = copyOfEvents.sort((a, b) => b.date.difference - a.date.difference);
+      sortedEvents = copyOfEvents.sort((a, b) => b.difference - a.difference);
       break;
     case SortType.PRICE:
       sortedEvents = copyOfEvents.sort((a, b) => b.price - a.price);
@@ -152,9 +152,9 @@ export default class TripController {
       let copyOfEvents = this._pointsModel.getPoints().slice(0);
       copyOfEvents = copyOfEvents.filter((item) => {
         const date = new Date(this._dates[i]);
-        return item.date.startDate.getDate() === date.getDate()
-          && item.date.startDate.getMonth() === date.getMonth()
-          && item.date.startDate.getFullYear() === date.getFullYear();
+        return item.startDate.getDate() === date.getDate()
+          && item.startDate.getMonth() === date.getMonth()
+          && item.startDate.getFullYear() === date.getFullYear();
       });
       const tripEventsList = tripDayComponent.getElement().querySelector(`.trip-events__list`);
       const points = renderEvents(copyOfEvents, tripEventsList, this._onDataChange, this._onViewChange);

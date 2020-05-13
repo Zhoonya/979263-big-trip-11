@@ -1,22 +1,24 @@
+import API from "./api.js";
 import SiteMenuComponent, {MenuItem} from "./components/site-menu.js";
 import FilterController from "./controllers/filter.js";
 import NewEventButtonComponent from "./components/new-event-button.js";
 // import TripInfoComponent from "./components/trip-info.js";
 // import TripInfoCostComponent from "./components/trip-info-cost.js";
 import PointsModel from "./models/points.js";
-import StatsComponent from "./components/stats.js"
-import {generateEvents} from "./mock/event.js";
+import StatsComponent from "./components/stats.js";
+// import {generateEvents} from "./mock/event.js";
 // import {getListOfDates} from "./mock/trip-day.js";
 import {render, RenderPosition} from "./utils/render.js";
 import TripController from "./controllers/trip.js";
+import {AUTHORIZATION} from "./const.js";
 
-const EVENT_COUNT = 5;
+// const EVENT_COUNT = 5;
 
-
-const events = generateEvents(EVENT_COUNT);
+// const events = generateEvents(EVENT_COUNT);
+const api = new API(AUTHORIZATION);
 // const dates = getListOfDates(events);
 const pointsModel = new PointsModel();
-pointsModel.setPoints(events);
+// pointsModel.setPoints(events);
 
 const siteHeaderElement = document.querySelector(`.trip-main`);
 const menuElement = siteHeaderElement.querySelector(`#header-menu`);
@@ -27,6 +29,7 @@ render(siteHeaderElement, newEventButtonComponent, RenderPosition.BEFOREEND);
 
 const siteMenuComponent = new SiteMenuComponent();
 render(menuElement, siteMenuComponent, RenderPosition.AFTEREND);
+
 const filterController = new FilterController(filtersElement, pointsModel);
 filterController.render();
 
@@ -35,7 +38,7 @@ filterController.render();
 // render(tripInfoElement, new TripInfoCostComponent(events), RenderPosition.BEFOREEND);
 
 const tripController = new TripController(document.querySelector(`.trip-events`), pointsModel);
-tripController.render();
+// tripController.render();
 
 const statsContainer = new StatsComponent(document.querySelector(`.statistics`));
 statsContainer.render(pointsModel.getPointsAll());
@@ -63,3 +66,9 @@ siteMenuComponent.setOnChange((menuItem) => {
       break;
   }
 });
+
+api.getPoints()
+  .then((points) => {
+    pointsModel.setPoints(points);
+    tripController.render();
+  });
