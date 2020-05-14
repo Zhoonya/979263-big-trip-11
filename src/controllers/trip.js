@@ -114,6 +114,9 @@ export default class TripController {
 
             pointController.getEditEventComponent().getElement().remove();
             this._updatePoints();
+          })
+          .catch(() => {
+            pointController.shake();
           });
       }
 
@@ -122,6 +125,9 @@ export default class TripController {
         .then(() => {
           this._pointsModel.removePoint(oldData.id);
           this._updatePoints();
+        })
+        .catch(() => {
+          pointController.shake();
         });
 
     } else {
@@ -132,6 +138,9 @@ export default class TripController {
             pointController.render(pointModel, PointControllerMode.DEFAULT);
             this._updatePoints();
           }
+        })
+        .catch(() => {
+          pointController.shake();
         });
     }
 

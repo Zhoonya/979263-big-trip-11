@@ -8,6 +8,8 @@ import {DESTINATION} from "../const.js";
 // import PointsModel from "../models/points";
 // import {getDescription, getOffersByType, getPhotos} from "../mock/event.js";
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 export const Mode = {
   ADDING: `adding`,
   DEFAULT: `default`,
@@ -216,6 +218,15 @@ export default class PointController {
     return this._editEventComponent;
   }
 
+  shake() {
+    this._editEventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._editEventComponent.getElement().style.animation = ``;
+      this._eventComponent.getElement().style.animation = ``;
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
 
   _replaceEventToEdit() {
     this._onViewChange();
