@@ -1,7 +1,9 @@
 import {render, remove, RenderPosition, replace} from "../utils/render.js";
 import EventComponent from "../components/event.js";
 import EditEventComponent from "../components/edit-event.js";
+import PointModel from "../models/point.js";
 import {TYPE} from "../const.js";
+import {DESTINATION} from "../const.js";
 // import {OFFERS} from "../const.js";
 // import PointsModel from "../models/points";
 // import {getDescription, getOffersByType, getPhotos} from "../mock/event.js";
@@ -24,6 +26,86 @@ export const EmptyPoint = {
   endDate: new Date(),
   isFavorite: false,
   offers: [],
+};
+
+const getDescription = (destination) => {
+  const filteredDestination = DESTINATION.slice().filter((item) => item.name === destination)[0];
+  if (filteredDestination !== undefined) {
+    return filteredDestination.description;
+  } else {
+    return ``;
+  }
+};
+
+const getPhotos = (destination) => {
+  const filteredDestination = DESTINATION.slice().filter((item) => item.name === destination)[0];
+  if (filteredDestination !== undefined) {
+    return filteredDestination.pictures;
+  } else {
+    return [];
+  }
+};
+
+// const parseFormData = (formData) => {
+//   let offers = Array.from(document.querySelectorAll(`.event__offer-selector`));
+//   if (offers.length > 0) {
+//     offers = offers.filter((item) => item.querySelector(`.event__offer-checkbox`).checked).map((item) => {
+//       return {
+//         title: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-title`).textContent,
+//         price: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-price`).textContent,
+//       };
+//     });
+//   } else {
+//     offers = [];
+//   }
+//   const startDate = new Date(formData.get(`event-start-time`));
+//   const endDate = new Date(formData.get(`event-end-time`));
+//   const destinationName = formData.get(`event-destination`);
+//   return {
+//     type: formData.get(`event-type`),
+//     destination: {
+//       name: destinationName,
+//       description: getDescription(destinationName),
+//       pictures: getPhotos(destinationName),
+//     },
+//     price: formData.get(`event-price`),
+//     startDate,
+//     endDate,
+//     difference: endDate - startDate,
+//     isFavorite: formData.get(`event-favorite`),
+//     offers,
+//   };
+// };
+
+const parseFormData = (formData, id) => {
+  let offers = Array.from(document.querySelectorAll(`.event__offer-selector`));
+  if (offers.length > 0) {
+    offers = offers.filter((item) => item.querySelector(`.event__offer-checkbox`).checked).map((item) => {
+      return {
+        title: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-title`).textContent,
+        price: Number(item.querySelector(`.event__offer-label`).querySelector(`.event__offer-price`).textContent),
+      };
+    });
+  } else {
+    offers = [];
+  }
+  const startDate = new Date(formData.get(`event-start-time`));
+  const endDate = new Date(formData.get(`event-end-time`));
+  const destinationName = formData.get(`event-destination`);
+  return new PointModel({
+    "id": id,
+    "type": formData.get(`event-type`),
+    "destination": {
+      "name": destinationName,
+      "description": getDescription(destinationName),
+      "pictures": getPhotos(destinationName),
+    },
+    "base_price": formData.get(`event-price`),
+    "date_from": String(startDate),
+    "date_to": String(endDate),
+    "is_favorite": formData.get(`event-favorite`),
+    "offers": offers,
+  });
 };
 
 export default class PointController {
@@ -60,7 +142,8 @@ export default class PointController {
     // });
     this._editEventComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      const data = this._editEventComponent.getData();
+      const formData = this._editEventComponent.getData();
+      const data = parseFormData(formData, this._pointModel.id);
       this._onDataChange(this, event, data);
       document.removeEventListener(`keydown`, this._handleKeyDown);
     });

@@ -249,36 +249,36 @@ const createEventEditTemplate = (event, options = {}) => {
   );
 };
 
-const parseFormData = (formData) => {
-  let offers = Array.from(document.querySelectorAll(`.event__offer-selector`));
-  if (offers.length > 0) {
-    offers = offers.filter((item) => item.querySelector(`.event__offer-checkbox`).checked).map((item) => {
-      return {
-        title: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-title`).textContent,
-        price: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-price`).textContent,
-      };
-    });
-  } else {
-    offers = [];
-  }
-  const startDate = new Date(formData.get(`event-start-time`));
-  const endDate = new Date(formData.get(`event-end-time`));
-  const destinationName = formData.get(`event-destination`);
-  return {
-    type: formData.get(`event-type`),
-    destination: {
-      name: destinationName,
-      description: getDescription(destinationName),
-      pictures: getPhotos(destinationName),
-    },
-    price: formData.get(`event-price`),
-    startDate,
-    endDate,
-    difference: endDate - startDate,
-    isFavorite: formData.get(`event-favorite`),
-    offers,
-  };
-};
+// const parseFormData = (formData) => {
+//   let offers = Array.from(document.querySelectorAll(`.event__offer-selector`));
+//   if (offers.length > 0) {
+//     offers = offers.filter((item) => item.querySelector(`.event__offer-checkbox`).checked).map((item) => {
+//       return {
+//         title: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-title`).textContent,
+//         price: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-price`).textContent,
+//       };
+//     });
+//   } else {
+//     offers = [];
+//   }
+//   const startDate = new Date(formData.get(`event-start-time`));
+//   const endDate = new Date(formData.get(`event-end-time`));
+//   const destinationName = formData.get(`event-destination`);
+//   return {
+//     type: formData.get(`event-type`),
+//     destination: {
+//       name: destinationName,
+//       description: getDescription(destinationName),
+//       pictures: getPhotos(destinationName),
+//     },
+//     price: formData.get(`event-price`),
+//     startDate,
+//     endDate,
+//     difference: endDate - startDate,
+//     isFavorite: formData.get(`event-favorite`),
+//     offers,
+//   };
+// };
 
 export default class EventEdit extends AbstractSmartComponent {
   constructor(event) {
@@ -368,9 +368,8 @@ export default class EventEdit extends AbstractSmartComponent {
 
   getData() {
     const form = this.getElement().querySelector(`.event--edit`);
-    const formData = new FormData(form);
 
-    return parseFormData(formData);
+    return new FormData(form);
   }
 
   setSubmitHandler(handler) {

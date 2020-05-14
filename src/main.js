@@ -13,9 +13,9 @@ import TripController from "./controllers/trip.js";
 import {AUTHORIZATION} from "./const.js";
 
 // const EVENT_COUNT = 5;
-
+const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
 // const events = generateEvents(EVENT_COUNT);
-const api = new API(AUTHORIZATION);
+const api = new API(END_POINT, AUTHORIZATION);
 // const dates = getListOfDates(events);
 const pointsModel = new PointsModel();
 // pointsModel.setPoints(events);
@@ -37,7 +37,7 @@ filterController.render();
 // const tripInfoElement = siteHeaderElement.querySelector(`.trip-info`);
 // render(tripInfoElement, new TripInfoCostComponent(events), RenderPosition.BEFOREEND);
 
-const tripController = new TripController(document.querySelector(`.trip-events`), pointsModel);
+const tripController = new TripController(document.querySelector(`.trip-events`), pointsModel, api);
 // tripController.render();
 
 const statsContainer = new StatsComponent(document.querySelector(`.statistics`));
@@ -55,7 +55,6 @@ siteMenuComponent.setOnChange((menuItem) => {
       siteMenuComponent.setActiveItem(MenuItem.TABLE);
       statsContainer.hide();
       tripController.show();
-      // tripController._updatePoints();
       newEventButtonComponent.removeDisabled();
       break;
     case MenuItem.STATS:

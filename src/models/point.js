@@ -11,6 +11,23 @@ export default class Point {
     this.isFavorite = Boolean(data[`is_favorite`]);
   }
 
+  toRAW() {
+    return {
+      "id": this.id,
+      "type": this.type,
+      "destination": {
+        "name": this.destination.name,
+        "description": this.destination.description,
+        "pictures": this.destination.pictures,
+      },
+      "base_price": Number(this.price),
+      "date_from": String(this.startDate),
+      "date_to": String(this.endDate),
+      "is_favorite": this.isFavorite,
+      "offers": this.offers,
+    };
+  }
+
   static parsePoint(data) {
     return new Point(data);
   }
@@ -18,4 +35,8 @@ export default class Point {
   static parsePoints(data) {
     return data.map(Point.parsePoint);
   }
+
+  // static clone(data) {
+  //   return new Point(data.toRAW());
+  // }
 }
