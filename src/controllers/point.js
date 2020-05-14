@@ -48,37 +48,6 @@ const getPhotos = (destination) => {
   }
 };
 
-// const parseFormData = (formData) => {
-//   let offers = Array.from(document.querySelectorAll(`.event__offer-selector`));
-//   if (offers.length > 0) {
-//     offers = offers.filter((item) => item.querySelector(`.event__offer-checkbox`).checked).map((item) => {
-//       return {
-//         title: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-title`).textContent,
-//         price: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-price`).textContent,
-//       };
-//     });
-//   } else {
-//     offers = [];
-//   }
-//   const startDate = new Date(formData.get(`event-start-time`));
-//   const endDate = new Date(formData.get(`event-end-time`));
-//   const destinationName = formData.get(`event-destination`);
-//   return {
-//     type: formData.get(`event-type`),
-//     destination: {
-//       name: destinationName,
-//       description: getDescription(destinationName),
-//       pictures: getPhotos(destinationName),
-//     },
-//     price: formData.get(`event-price`),
-//     startDate,
-//     endDate,
-//     difference: endDate - startDate,
-//     isFavorite: formData.get(`event-favorite`),
-//     offers,
-//   };
-// };
-
 const parseFormData = (formData, id) => {
   let offers = Array.from(document.querySelectorAll(`.event__offer-selector`));
   if (offers.length > 0) {
@@ -136,20 +105,25 @@ export default class PointController {
       this._replaceEventToEdit();
       document.addEventListener(`keydown`, this._handleKeyDown);
     });
-
-    // this._editEventComponent.setFavoritesButtonClickHandler(() => {
-    //   this._onDataChange(this, event, Object.assign({}, event, {
-    //     isFavorite: !event.isFavorite,
-    //   }));
-    // });
     this._editEventComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
       const formData = this._editEventComponent.getData();
       const data = parseFormData(formData, this._pointModel.id);
+
+      this._editEventComponent.setData({
+        saveButtonText: `Saving...`,
+      });
+      this.blockForm();
       this._onDataChange(this, event, data);
       document.removeEventListener(`keydown`, this._handleKeyDown);
     });
-    this._editEventComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, event, null));
+    this._editEventComponent.setDeleteButtonClickHandler(() => {
+      this._editEventComponent.setData({
+        deleteButtonText: `Deleting...`,
+      });
+      this.blockForm();
+      this._onDataChange(this, event, null);
+    });
     this._editEventComponent.setCloseButtonClickHandler((evt) => {
       evt.preventDefault();
       this._replaceEditToEvent();
@@ -221,11 +195,23 @@ export default class PointController {
   shake() {
     this._editEventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     this._eventComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-
     setTimeout(() => {
       this._editEventComponent.getElement().style.animation = ``;
       this._eventComponent.getElement().style.animation = ``;
+
+      this._editEventComponent.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`,
+      });
     }, SHAKE_ANIMATION_TIMEOUT);
+
+  }
+
+  blockForm() {
+    this._editEventComponent.getElement().querySelectorAll(`form input, form select, form textarea, form button`)
+      .forEach((item) => {
+        item.disabled = true;
+      });
   }
 
   _replaceEventToEdit() {

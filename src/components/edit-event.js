@@ -15,6 +15,11 @@ import "flatpickr/dist/flatpickr.min.css";
 //   }
 // };
 
+const DefaultData = {
+  deleteButtonText: `Delete`,
+  saveButtonText: `Save`,
+};
+
 const getOffersByType = (type) => {
   return OFFERS.slice().filter((item) => item.type === type)[0].offers;
 };
@@ -39,7 +44,7 @@ const getPhotos = (destination) => {
 
 // Форма редактирования точки маршрута
 const createEventEditTemplate = (event, options = {}) => {
-  const {type, offers, destination, startDate, endDate, price, isFavorite} = options;
+  const {type, offers, destination, startDate, endDate, price, isFavorite, externalData} = options;
 
   const eventTitle = type[0].toUpperCase() + type.slice(1);
   const preposition = ARRIVAL.has(type) ? `in` : `to`;
@@ -49,6 +54,9 @@ const createEventEditTemplate = (event, options = {}) => {
   // const saveButtonDisabletAttribute = isValidDestination(destination) ? `` : `disabled`;
   const destinationValue = encode(destination.name);
   const priceValue = encode(String(price));
+
+  const deleteButtonText = externalData.deleteButtonText;
+  const saveButtonText = externalData.saveButtonText;
 
   const createDestinationList = () => {
     return DESTINATION.slice().map((item) => {
@@ -230,8 +238,8 @@ const createEventEditTemplate = (event, options = {}) => {
             </label>
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${priceValue}" required  pattern="[1-9]+[0-9]*|0">
           </div>
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
+          <button class="event__reset-btn" type="reset">${deleteButtonText}</button>
           <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${favoriteAttribute}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
@@ -248,37 +256,6 @@ const createEventEditTemplate = (event, options = {}) => {
     </li>`
   );
 };
-
-// const parseFormData = (formData) => {
-//   let offers = Array.from(document.querySelectorAll(`.event__offer-selector`));
-//   if (offers.length > 0) {
-//     offers = offers.filter((item) => item.querySelector(`.event__offer-checkbox`).checked).map((item) => {
-//       return {
-//         title: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-title`).textContent,
-//         price: item.querySelector(`.event__offer-label`).querySelector(`.event__offer-price`).textContent,
-//       };
-//     });
-//   } else {
-//     offers = [];
-//   }
-//   const startDate = new Date(formData.get(`event-start-time`));
-//   const endDate = new Date(formData.get(`event-end-time`));
-//   const destinationName = formData.get(`event-destination`);
-//   return {
-//     type: formData.get(`event-type`),
-//     destination: {
-//       name: destinationName,
-//       description: getDescription(destinationName),
-//       pictures: getPhotos(destinationName),
-//     },
-//     price: formData.get(`event-price`),
-//     startDate,
-//     endDate,
-//     difference: endDate - startDate,
-//     isFavorite: formData.get(`event-favorite`),
-//     offers,
-//   };
-// };
 
 export default class EventEdit extends AbstractSmartComponent {
   constructor(event) {
@@ -300,6 +277,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this._difference = this._endDate - this._startDate;
     this._price = event.price;
     this._isFavorite = event.isFavorite;
+    this._externalData = DefaultData;
 
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
@@ -322,6 +300,7 @@ export default class EventEdit extends AbstractSmartComponent {
       difference: this._difference,
       price: this._price,
       isFavorite: this._isFavorite,
+      externalData: this._externalData,
     });
   }
 
@@ -370,6 +349,11 @@ export default class EventEdit extends AbstractSmartComponent {
     const form = this.getElement().querySelector(`.event--edit`);
 
     return new FormData(form);
+  }
+
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultData, data);
+    this.rerender();
   }
 
   setSubmitHandler(handler) {
@@ -489,6 +473,24 @@ export default class EventEdit extends AbstractSmartComponent {
     element.querySelector(`.event__favorite-checkbox`).addEventListener(`change`, () => {
       this._isFavorite = !this._isFavorite;
       this.rerender();
+    });
+
+    const offersCheckboxes = element.querySelectorAll(`.event__offer-checkbox`);
+    offersCheckboxes.forEach((item) => {
+      item.addEventListener(`change`, () => {
+        let offers = Array.from(element.querySelectorAll(`.event__offer-selector`));
+        if (offers.length > 0) {
+          this._offers = offers.filter((offer) => offer.querySelector(`.event__offer-checkbox`).checked).map((offer) => {
+            return {
+              title: offer.querySelector(`.event__offer-label`).querySelector(`.event__offer-title`).textContent,
+              price: Number(offer.querySelector(`.event__offer-label`).querySelector(`.event__offer-price`).textContent),
+            };
+          });
+        } else {
+          this._offers = [];
+        }
+        this.rerender();
+      });
     });
   }
 }
