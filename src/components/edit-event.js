@@ -22,7 +22,8 @@ const DefaultData = {
 
 // Форма редактирования точки маршрута
 const createEventEditTemplate = (event, options = {}) => {
-  const {type, offers, destination, startDate, endDate, price, isFavorite, externalData} = options;
+  const {isFavorite} = event;
+  const {type, offers, destination, startDate, endDate, price, externalData} = options;
 
   const eventTitle = type[0].toUpperCase() + type.slice(1);
   const preposition = ARRIVAL.has(type) ? `in` : `to`;
@@ -254,7 +255,6 @@ export default class EventEdit extends AbstractSmartComponent {
     this._endDate = event.endDate;
     this._difference = this._endDate - this._startDate;
     this._price = event.price;
-    this._isFavorite = event.isFavorite;
     this._externalData = DefaultData;
 
     this._flatpickrStart = null;
@@ -277,7 +277,6 @@ export default class EventEdit extends AbstractSmartComponent {
       endDate: this._endDate,
       difference: this._difference,
       price: this._price,
-      isFavorite: this._isFavorite,
       externalData: this._externalData,
     });
   }
@@ -299,6 +298,7 @@ export default class EventEdit extends AbstractSmartComponent {
     this.setSubmitHandler(this._submitHandler);
     this.setCloseButtonClickHandler(this._closeButtonClickHandler);
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
+    this.setFavoritesButtonClickHandler(this._setFavoritesButtonClickHandler);
     this._subscribeOnEvents();
   }
 
@@ -318,7 +318,6 @@ export default class EventEdit extends AbstractSmartComponent {
     this._endDate = event.endDate;
     this._difference = event.difference;
     this._price = event.price;
-    this._isFavorite = event.isFavorite;
 
     this.rerender();
   }
@@ -344,9 +343,10 @@ export default class EventEdit extends AbstractSmartComponent {
     this._closeButtonClickHandler = handler;
   }
 
-  // setFavoritesButtonClickHandler(handler) {
-  //   this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, handler);
-  // }
+  setFavoritesButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, handler);
+    this._setFavoritesButtonClickHandler = handler;
+  }
 
   setDeleteButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__reset-btn`)
@@ -446,11 +446,6 @@ export default class EventEdit extends AbstractSmartComponent {
       } else {
         price.setCustomValidity(``);
       }
-    });
-
-    element.querySelector(`.event__favorite-checkbox`).addEventListener(`change`, () => {
-      this._isFavorite = !this._isFavorite;
-      this.rerender();
     });
 
     const offersCheckboxes = element.querySelectorAll(`.event__offer-checkbox`);

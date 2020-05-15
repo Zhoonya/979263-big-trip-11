@@ -60,7 +60,7 @@ const parseFormData = (formData, id) => {
 };
 
 export default class PointController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange, onViewChange, infoController, onFavoriteChange) {
     this._container = container;
     this._eventComponent = null;
     this._editEventComponent = null;
@@ -69,6 +69,8 @@ export default class PointController {
     this._onViewChange = onViewChange;
     this._mode = Mode.DEFAULT;
     this._pointModel = null;
+    this._infoController = infoController;
+    this._onFavoriteChange = onFavoriteChange;
 
   }
 
@@ -85,6 +87,12 @@ export default class PointController {
       this._replaceEventToEdit();
       document.addEventListener(`keydown`, this._handleKeyDown);
     });
+    this._editEventComponent.setFavoritesButtonClickHandler(() => {
+      const newPoint = PointModel.clone(event);
+      newPoint.isFavorite = !newPoint.isFavorite;
+      // this._onDataChange(this, event, newPoint);
+      this._onFavoriteChange(this, event, newPoint);
+    });
     this._editEventComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
       const formData = this._editEventComponent.getData();
@@ -93,6 +101,7 @@ export default class PointController {
       this._editEventComponent.setData({
         saveButtonText: `Saving...`,
       });
+      this._infoController.addLoadingStatus();
       this.blockForm();
       this._onDataChange(this, event, data);
       document.removeEventListener(`keydown`, this._handleKeyDown);
@@ -111,6 +120,15 @@ export default class PointController {
     });
 
     switch (mode) {
+      case Mode.EDIT:
+        if (oldEventEditComponent && oldEventComponent) {
+          replace(this._eventComponent, oldEventComponent);
+          replace(this._editEventComponent, oldEventEditComponent);
+          // this._replaceEditToEvent();
+        } else {
+          render(this._container, this._editEventComponent, RenderPosition.BEFOREEND);
+        }
+        break;
       case Mode.DEFAULT:
         if (oldEventEditComponent && oldEventComponent) {
           replace(this._eventComponent, oldEventComponent);

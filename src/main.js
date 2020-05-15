@@ -10,6 +10,7 @@ import StatsComponent from "./components/stats.js";
 // import {getListOfDates} from "./mock/trip-day.js";
 import {render, RenderPosition} from "./utils/render.js";
 import TripController from "./controllers/trip.js";
+import InfoController from "./controllers/info.js";
 import {AUTHORIZATION} from "./const.js";
 import {models} from "./models/index.js";
 
@@ -33,11 +34,14 @@ function renderApp() {
   const filterController = new FilterController(filtersElement, pointsModel);
   filterController.render();
 
+  const infoController = new InfoController(siteHeaderElement);
+  infoController.render(pointsModel);
+
   // render(siteHeaderElement, new TripInfoComponent(dates, events), RenderPosition.AFTERBEGIN);
   // const tripInfoElement = siteHeaderElement.querySelector(`.trip-info`);
   // render(tripInfoElement, new TripInfoCostComponent(events), RenderPosition.BEFOREEND);
 
-  tripController = new TripController(document.querySelector(`.trip-events`), pointsModel, api);
+  tripController = new TripController(document.querySelector(`.trip-events`), pointsModel, api, infoController);
   // tripController.render();
 
   const statsContainer = new StatsComponent(document.querySelector(`.statistics`));
@@ -82,7 +86,8 @@ Promise.all([api.getOffers(), api.getDestinations(), api.getPoints()])
   .then((response) => {
     models.offers = response[0];
     models.destinations = response[1];
-    renderApp();
+
     pointsModel.setPoints(response[2]);
+    renderApp();
     tripController.render();
   });

@@ -1,10 +1,10 @@
 import AbstractComponent from "./abstract-component.js";
 
 // Стоимость путешествия (раздел информации о путешествии)
-export const createTripInfoCostTemplate = (events) => {
-  const cost = events.slice().reduce((sum, item) => {
-    return sum + item.price;
-  }, 0);
+export const createTripInfoCostTemplate = (cost) => {
+  // const cost = events.slice().reduce((sum, item) => {
+  //   return sum + item.price;
+  // }, 0);
   return (
     `<p class="trip-info__cost">
       Total: &euro;&nbsp;<span class="trip-info__cost-value">${cost}</span>
@@ -13,13 +13,13 @@ export const createTripInfoCostTemplate = (events) => {
 };
 
 export default class TripInfoCost extends AbstractComponent {
-  constructor(events) {
+  constructor(cost) {
     super();
 
-    this._events = events;
+    this._cost = cost;
   }
 
   getTemplate() {
-    return createTripInfoCostTemplate(this._events);
+    return createTripInfoCostTemplate(this._cost);
   }
 }

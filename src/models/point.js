@@ -36,7 +36,7 @@ export default class Point {
     return data.map(Point.parsePoint);
   }
 
-  // static clone(data) {
-  //   return new Point(data.toRAW());
-  // }
+  static clone(data) {
+    return new Point(data.toRAW());
+  }
 }
