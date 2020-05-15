@@ -1,6 +1,7 @@
 import {TYPE, ARRIVAL} from "../const.js";
 import {formatDateTime, getDescription, getPhotos, getOffersByType} from "../utils/common.js";
 import {models} from "../models/index.js";
+import {Mode} from "../controllers/point.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import flatpickr from "flatpickr";
 import {encode} from "he";
@@ -237,7 +238,7 @@ const createEventEditTemplate = (event, options = {}) => {
 };
 
 export default class EventEdit extends AbstractSmartComponent {
-  constructor(event) {
+  constructor(event, mode) {
     super();
 
     this._event = event;
@@ -256,6 +257,8 @@ export default class EventEdit extends AbstractSmartComponent {
     this._difference = this._endDate - this._startDate;
     this._price = event.price;
     this._externalData = DefaultData;
+
+    this._mode = mode;
 
     this._flatpickrStart = null;
     this._flatpickrEnd = null;
@@ -304,6 +307,14 @@ export default class EventEdit extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+    if (this._mode === Mode.ADDING) {
+      const editEventForm = this.getElement().querySelector(`.event--edit`);
+      editEventForm.classList.add(`trip-events__item`);
+      editEventForm.querySelector(`.event__rollup-btn`).remove();
+      editEventForm.querySelector(`.event__favorite-btn`).remove();
+      editEventForm.querySelector(`.event__favorite-checkbox`).remove();
+      editEventForm.querySelector(`.event__reset-btn`).textContent = `Cancel`;
+    }
     this._applyFlatpickr();
   }
 

@@ -81,7 +81,7 @@ export default class PointController {
     this._mode = mode;
 
     this._eventComponent = new EventComponent(event);
-    this._editEventComponent = new EditEventComponent(event);
+    this._editEventComponent = new EditEventComponent(event, this._mode);
 
     this._eventComponent.setOpenButtonClickHandler(() => {
       this._replaceEventToEdit();
@@ -145,9 +145,7 @@ export default class PointController {
         }
         this._onViewChange();
         document.addEventListener(`keydown`, this._handleKeyDown);
-
-        render(this._container, this._editEventComponent, RenderPosition.BEFOREBEGIN);
-        this._editEventComponent.getElement().classList.add(`day`);
+        render(this._container, this._editEventComponent, RenderPosition.AFTERBEGIN);
         const editEventForm = this._editEventComponent.getElement().querySelector(`.event--edit`);
         editEventForm.classList.add(`trip-events__item`);
         editEventForm.querySelector(`.event__rollup-btn`).remove();
