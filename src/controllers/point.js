@@ -1,12 +1,10 @@
 import {render, remove, RenderPosition, replace} from "../utils/render.js";
+import {getDescription, getPhotos} from "../utils/common.js";
 import EventComponent from "../components/event.js";
 import EditEventComponent from "../components/edit-event.js";
 import PointModel from "../models/point.js";
 import {TYPE} from "../const.js";
-import {DESTINATION} from "../const.js";
-// import {OFFERS} from "../const.js";
 // import PointsModel from "../models/points";
-// import {getDescription, getOffersByType, getPhotos} from "../mock/event.js";
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
@@ -28,24 +26,6 @@ export const EmptyPoint = {
   endDate: new Date(),
   isFavorite: false,
   offers: [],
-};
-
-const getDescription = (destination) => {
-  const filteredDestination = DESTINATION.slice().filter((item) => item.name === destination)[0];
-  if (filteredDestination !== undefined) {
-    return filteredDestination.description;
-  } else {
-    return ``;
-  }
-};
-
-const getPhotos = (destination) => {
-  const filteredDestination = DESTINATION.slice().filter((item) => item.name === destination)[0];
-  if (filteredDestination !== undefined) {
-    return filteredDestination.pictures;
-  } else {
-    return [];
-  }
 };
 
 const parseFormData = (formData, id) => {

@@ -54,27 +54,34 @@ export default class API {
   }
 
   getOffers() {
-    const headers = new Headers();
-    headers.append(`Authorization`, this._authorization);
-
-    return fetch(`https://11.ecmascript.pages.academy/big-trip/offers`, {headers})
-      .then(checkStatus)
-      .then((response) => response.json())
-      .then((response) => {
-        return response;
-      });
+    return this._load({url: `offers`})
+      .then((response) => response.json());
   }
 
-  getDestinations() {
-    const headers = new Headers();
-    headers.append(`Authorization`, this._authorization);
+  // async getOffers() {
+  //   const headers = new Headers();
+  //   headers.append(`Authorization`, this._authorization);
+  //
+  //   let res = await fetch(`https://11.ecmascript.pages.academy/big-trip/offers`, {headers});
+  //   res = checkStatus(res);
+  //   return await res.json();
+  // }
 
-    return fetch(`https://11.ecmascript.pages.academy/big-trip/destinations`, {headers})
-      .then(checkStatus)
-      .then((response) => response.json())
-      .then((response) => {
-        return response;
-      });
+  // getOffers() {
+  //   const headers = new Headers();
+  //   headers.append(`Authorization`, this._authorization);
+  //
+  //   return fetch(`https://11.ecmascript.pages.academy/big-trip/offers`, {headers})
+  //     .then(checkStatus)
+  //     .then((response) => response.json())
+  //     .then((response) => {
+  //       return response;
+  //     });
+  // }
+
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then((response) => response.json());
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

@@ -1,9 +1,9 @@
-import {TYPE, ARRIVAL, DESTINATION, OFFERS} from "../const.js";
-import {formatDateTime} from "../utils/common.js";
+import {TYPE, ARRIVAL} from "../const.js";
+import {formatDateTime, getDescription, getPhotos, getOffersByType} from "../utils/common.js";
+import {models} from "../models/index.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import flatpickr from "flatpickr";
 import {encode} from "he";
-
 import "flatpickr/dist/flatpickr.min.css";
 
 // const isValidDestination = (destination) => {
@@ -18,28 +18,6 @@ import "flatpickr/dist/flatpickr.min.css";
 const DefaultData = {
   deleteButtonText: `Delete`,
   saveButtonText: `Save`,
-};
-
-const getOffersByType = (type) => {
-  return OFFERS.slice().filter((item) => item.type === type)[0].offers;
-};
-
-const getDescription = (destination) => {
-  const filteredDestination = DESTINATION.slice().filter((item) => item.name === destination)[0];
-  if (filteredDestination !== undefined) {
-    return filteredDestination.description;
-  } else {
-    return ``;
-  }
-};
-
-const getPhotos = (destination) => {
-  const filteredDestination = DESTINATION.slice().filter((item) => item.name === destination)[0];
-  if (filteredDestination !== undefined) {
-    return filteredDestination.pictures;
-  } else {
-    return [];
-  }
 };
 
 // Форма редактирования точки маршрута
@@ -59,14 +37,14 @@ const createEventEditTemplate = (event, options = {}) => {
   const saveButtonText = externalData.saveButtonText;
 
   const createDestinationList = () => {
-    return DESTINATION.slice().map((item) => {
+    return models.destinations.slice().map((item) => {
       const destinationName = item.name[0].toUpperCase() + item.name.slice(1);
       return (`<option value="${destinationName}"></option>`);
     }).join(`\n`);
   };
 
   const createDestinationPattern = () => {
-    return DESTINATION.slice().map((item) => {
+    return models.destinations.slice().map((item) => {
       const destinationName = item.name[0].toUpperCase() + item.name.slice(1);
       return (`${destinationName}`);
     }).join(`|`);
@@ -155,7 +133,7 @@ const createEventEditTemplate = (event, options = {}) => {
   };
 
   const createInformation = () => {
-    const allDestinations = DESTINATION.slice().map((item) => item.name);
+    const allDestinations = models.destinations.slice().map((item) => item.name);
 
     if (allDestinations.includes(destination.name)) {
       const description = destination.description;

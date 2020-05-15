@@ -1,4 +1,5 @@
 import moment from "moment/moment";
+import {models} from "../models/index.js";
 
 export const formatTime = (date) => {
   return moment(date).format(`HH:mm`);
@@ -32,5 +33,31 @@ export const formatDuration = (difference) => {
     remainder = remainder - (hour * 60);
     const minute = remainder;
     return (`${day}D ${hour}H ${minute}M`);
+  }
+};
+
+export const getOffersByType = (type) => {
+  const offersType = models.offers.find((item) => item.type === type);
+  if (offersType) {
+    return offersType.offers;
+  }
+  return [];
+};
+
+export const getDescription = (destination) => {
+  const filteredDestination = models.destinations.slice().filter((item) => item.name === destination)[0];
+  if (filteredDestination !== undefined) {
+    return filteredDestination.description;
+  } else {
+    return ``;
+  }
+};
+
+export const getPhotos = (destination) => {
+  const filteredDestination = models.destinations.slice().filter((item) => item.name === destination)[0];
+  if (filteredDestination !== undefined) {
+    return filteredDestination.pictures;
+  } else {
+    return [];
   }
 };
