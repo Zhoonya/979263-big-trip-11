@@ -3,6 +3,7 @@ import {HIDDEN_CLASS, TRANSPORT} from "../const.js";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {render, RenderPosition} from "../utils/render.js";
+import {formatDuration} from "../utils/common.js";
 
 const BAR_HEIGHT = 55;
 
@@ -184,17 +185,30 @@ const renderTransportChart = (transportCtx, points) => {
   });
 };
 
-const renderTimeChart = (timeCtx) => {
+const renderTimeChart = (timeCtx, points) => {
 
-  timeCtx.height = BAR_HEIGHT * 3;
+  const labels = points
+    .map((point) => point.type.toUpperCase())
+    .filter(getUniqItems);
+
+  const data = labels.slice().map((label) => {
+    const filteredPoints = points.slice().filter((point) => {
+      return point.type === label.toLowerCase();
+    });
+    return filteredPoints.reduce((sum, current) => {
+      return sum + Number(current.difference);
+    }, 0);
+  });
+
+  timeCtx.height = BAR_HEIGHT * labels.length;
 
   return new Chart(timeCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: [`anything`, `anything`, `anything`],
+      labels,
       datasets: [{
-        data: [5, 6, 7],
+        data,
         backgroundColor: `#ffffff`,
         hoverBackgroundColor: `#ffffff`,
         anchor: `start`,
@@ -209,7 +223,7 @@ const renderTimeChart = (timeCtx) => {
           color: `#000000`,
           anchor: `end`,
           align: `start`,
-          formatter: (val) => `${val}D`
+          formatter: (val) => `${formatDuration(val)}`
         }
       },
       title: {
