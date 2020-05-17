@@ -1,4 +1,4 @@
-import {render, RenderPosition} from "../utils/render.js";
+import {render, remove, RenderPosition} from "../utils/render.js";
 import NoEventsComponent from "../components/no-events.js";
 import TripSortComponent, {SortType} from "../components/trip-sort.js";
 import TripDaysListComponent from "../components/trip-days-list.js";
@@ -40,7 +40,7 @@ export default class TripController {
     this._pointsModel = pointsModel;
     this._dates = [];
     this._pointControllers = [];
-    this._noEventsComponent = new NoEventsComponent();
+    this._noEventsComponent = null;
     this._tripSortComponent = new TripSortComponent();
     this._tripDaysListComponent = new TripDaysListComponent();
     this._creatingPoint = null;
@@ -77,6 +77,7 @@ export default class TripController {
     const points = this._pointsModel.getPoints();
 
     if (points.length === 0) {
+      this._noEventsComponent = new NoEventsComponent();
       render(this._container, this._noEventsComponent, RenderPosition.BEFOREEND);
       return;
     }
@@ -181,6 +182,12 @@ export default class TripController {
   }
 
   _renderEventsByDays() {
+
+    if (this._pointsModel.getPointsAll().length === 0 && this._noEventsComponent === null) {
+      this._noEventsComponent = new NoEventsComponent();
+      render(this._container, this._noEventsComponent, RenderPosition.BEFOREEND);
+      return;
+    }
     this._pointControllers = [];
 
     this._tripSortComponent.setSortType(SortType.EVENT);
@@ -219,7 +226,15 @@ export default class TripController {
     if (this._creatingPoint) {
       return;
     }
+
+    if (this._pointControllers.length === 0) {
+      render(this._container, this._tripDaysListComponent, RenderPosition.BEFOREEND);
+      remove(this._noEventsComponent);
+      this._noEventsComponent = null;
+    }
+
     const tripDaysListElement = this._tripDaysListComponent.getElement();
+
     this._creatingPoint = new PointController(tripDaysListElement, this._onDataChange, this._onViewChange, this._infoController, this._onFavoriteChange);
 
     this._creatingPoint.render(EmptyPoint, PointControllerMode.ADDING);

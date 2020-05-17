@@ -421,6 +421,7 @@ export default class EventEdit extends AbstractSmartComponent {
     types.forEach((item) => {
       item.addEventListener(`click`, (evt) => {
         this._type = evt.target.textContent.toLowerCase();
+        this._offers = [];
         this.rerender();
       });
     });
