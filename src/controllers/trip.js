@@ -6,6 +6,7 @@ import TripDayComponent from "../components/trip-day.js";
 import PointController, {Mode as PointControllerMode, EmptyPoint} from "./point.js";
 import {getListOfDates} from "../mock/trip-day.js";
 import {HIDDEN_CLASS} from "../const.js";
+import {getPointsByFilter} from "../utils/filter.js"
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
@@ -166,7 +167,6 @@ export default class TripController {
           this._infoController.rerender(this._pointsModel);
         });
     }
-
   }
 
   _onSortTypeChange(sortType) {
@@ -210,6 +210,8 @@ export default class TripController {
       const points = renderEvents(copyOfEvents, tripEventsList, this._onDataChange, this._onViewChange, this._infoController, this._onFavoriteChange);
       this._pointControllers = this._pointControllers.concat(points);
     }
+
+    this._checkFilters(this._pointsModel.getPointsAll());
   }
 
   _renderEventsBySortType(sortedEvents) {
@@ -259,5 +261,17 @@ export default class TripController {
       }
     });
     this._updatePoints();
+  }
+
+  _checkFilters(points) {
+    const filters = document.querySelectorAll(`.trip-filters__filter-input`);
+    filters.forEach((item) => {
+      const filteredPoints = getPointsByFilter(points, item.value);
+      if (filteredPoints.length === 0 && !item.hasAttribute(`disabled`)) {
+        item.disabled = true;
+      } else if (filteredPoints.length > 0 && item.hasAttribute(`disabled`)) {
+        item.disabled = false;
+      }
+    });
   }
 }
