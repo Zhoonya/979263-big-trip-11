@@ -1,4 +1,4 @@
-import Point from "./models/point.js";
+import Point from "../models/point.js";
 
 const Method = {
   GET: `GET`,
@@ -81,6 +81,16 @@ export default class API {
 
   getDestinations() {
     return this._load({url: `destinations`})
+      .then((response) => response.json());
+  }
+
+  sync(data) {
+    return this._load({
+      url: `points/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
       .then((response) => response.json());
   }
 

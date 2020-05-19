@@ -1,13 +1,11 @@
-import API from "./api.js";
+import API from "./api/index.js";
+import Provider from "./api/provider.js";
+import Store from "./api/store.js";
 import SiteMenuComponent, {MenuItem} from "./components/site-menu.js";
 import FilterController from "./controllers/filter.js";
 import NewEventButtonComponent from "./components/new-event-button.js";
-// import TripInfoComponent from "./components/trip-info.js";
-// import TripInfoCostComponent from "./components/trip-info-cost.js";
 import PointsModel from "./models/points.js";
 import StatsComponent from "./components/stats.js";
-// import {generateEvents} from "./mock/event.js";
-// import {getListOfDates} from "./mock/trip-day.js";
 import {render, RenderPosition} from "./utils/render.js";
 import TripController from "./controllers/trip.js";
 import InfoController from "./controllers/info.js";
@@ -15,7 +13,13 @@ import {AUTHORIZATION} from "./const.js";
 import {models} from "./models/index.js";
 
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
+const STORE_PREFIX = `big-trip-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+
 const api = new API(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
 const pointsModel = new PointsModel();
 let tripController = null;
@@ -41,7 +45,7 @@ function renderApp() {
   // const tripInfoElement = siteHeaderElement.querySelector(`.trip-info`);
   // render(tripInfoElement, new TripInfoCostComponent(events), RenderPosition.BEFOREEND);
 
-  tripController = new TripController(document.querySelector(`.trip-events`), pointsModel, api, infoController);
+  tripController = new TripController(document.querySelector(`.trip-events`), pointsModel, apiWithProvider, infoController);
   // tripController.render();
 
   const statsContainer = new StatsComponent(document.querySelector(`.statistics`));
@@ -82,7 +86,7 @@ function renderApp() {
 //       });
 //   });
 
-Promise.all([api.getOffers(), api.getDestinations(), api.getPoints()])
+Promise.all([apiWithProvider.getOffers(), apiWithProvider.getDestinations(), apiWithProvider.getPoints()])
   .then((response) => {
     models.offers = response[0];
     models.destinations = response[1];
@@ -91,3 +95,13 @@ Promise.all([api.getOffers(), api.getDestinations(), api.getPoints()])
     renderApp();
     tripController.render();
   });
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});
