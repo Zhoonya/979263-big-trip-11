@@ -82,14 +82,12 @@ const renderApp = () => {
 //       });
 //   });
 
-Promise.all([apiWithProvider.getOffers(), apiWithProvider.getDestinations(), apiWithProvider.getPoints()])
+Promise.all([apiWithProvider.getPoints(), apiWithProvider.getOffers(), apiWithProvider.getDestinations()])
   .then((response) => {
+    models.offers = response[1];
+    models.destinations = response[2];
 
-
-    models.offers = response[0];
-    models.destinations = response[1];
-
-    pointsModel.setPoints(response[2]);
+    pointsModel.setPoints(response[0]);
     renderApp();
     tripController.render();
   });
