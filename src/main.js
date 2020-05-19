@@ -24,7 +24,7 @@ const apiWithProvider = new Provider(api, store);
 const pointsModel = new PointsModel();
 let tripController = null;
 
-function renderApp() {
+const renderApp = () => {
   const siteHeaderElement = document.querySelector(`.trip-main`);
   const menuElement = siteHeaderElement.querySelector(`#header-menu`);
   const filtersElement = siteHeaderElement.querySelector(`#header-filters`);
@@ -41,12 +41,7 @@ function renderApp() {
   const infoController = new InfoController(siteHeaderElement);
   infoController.render(pointsModel);
 
-  // render(siteHeaderElement, new TripInfoComponent(dates, events), RenderPosition.AFTERBEGIN);
-  // const tripInfoElement = siteHeaderElement.querySelector(`.trip-info`);
-  // render(tripInfoElement, new TripInfoCostComponent(events), RenderPosition.BEFOREEND);
-
   tripController = new TripController(document.querySelector(`.trip-events`), pointsModel, apiWithProvider, infoController);
-  // tripController.render();
 
   const statsContainer = new StatsComponent(document.querySelector(`.statistics`));
   statsContainer.render(pointsModel.getPointsAll());
@@ -73,7 +68,8 @@ function renderApp() {
         break;
     }
   });
-}
+};
+
 
 // api.getOffers()
 //   .then((offers) => {
@@ -88,6 +84,8 @@ function renderApp() {
 
 Promise.all([apiWithProvider.getOffers(), apiWithProvider.getDestinations(), apiWithProvider.getPoints()])
   .then((response) => {
+
+
     models.offers = response[0];
     models.destinations = response[1];
 
@@ -95,6 +93,12 @@ Promise.all([apiWithProvider.getOffers(), apiWithProvider.getDestinations(), api
     renderApp();
     tripController.render();
   });
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {})
+    .catch(() => {});
+});
 
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);

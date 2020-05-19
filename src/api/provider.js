@@ -88,21 +88,11 @@ export default class Provider {
   }
 
   getOffers() {
-    if (isOnline()) {
-      return this._api.getOffers();
-    }
-
-    // TODO: Реализовать логику при отсутствии интернета
-    return Promise.reject(`offline logic is not implemented`);
+    return this._api.getOffers();
   }
 
   getDestinations() {
-    if (isOnline()) {
-      return this._api.getDestinations();
-    }
-
-    // TODO: Реализовать логику при отсутствии интернета
-    return Promise.reject(`offline logic is not implemented`);
+    return this._api.getDestinations();
   }
 
   sync() {
