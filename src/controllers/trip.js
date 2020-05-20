@@ -6,7 +6,7 @@ import TripDayComponent from "../components/trip-day.js";
 import PointController, {Mode as PointControllerMode, EmptyPoint} from "./point.js";
 import {getListOfDates} from "../mock/trip-day.js";
 import {HIDDEN_CLASS} from "../const.js";
-import {getPointsByFilter} from "../utils/filter.js"
+import {getPointsByFilter} from "../utils/filter.js";
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
@@ -200,7 +200,7 @@ export default class TripController {
       render(this._tripDaysListComponent.getElement(), tripDayComponent, RenderPosition.BEFOREEND);
 
       let copyOfEvents = this._pointsModel.getPoints().slice(0);
-      copyOfEvents = copyOfEvents.filter((item) => {
+      copyOfEvents = copyOfEvents.sort((a, b) => a.startDate - b.startDate).filter((item) => {
         const date = new Date(this._dates[i]);
         return item.startDate.getDate() === date.getDate()
           && item.startDate.getMonth() === date.getMonth()

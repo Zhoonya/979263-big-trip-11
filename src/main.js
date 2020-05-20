@@ -13,13 +13,19 @@ import {AUTHORIZATION} from "./const.js";
 import {models} from "./models/index.js";
 
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
-const STORE_PREFIX = `big-trip-localstorage`;
+const STORE_POINTS_PREFIX = `big-trip_points-localstorage`;
+const STORE_OFFERS_PREFIX = `big-trip_offers-localstorage`;
+const STORE_DESTINATIONS_PREFIX = `big-trip_destinations-localstorage`;
 const STORE_VER = `v1`;
-const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+const STORE_POINTS_NAME = `${STORE_POINTS_PREFIX}-${STORE_VER}`;
+const STORE_OFFERS_NAME = `${STORE_OFFERS_PREFIX}-${STORE_VER}`;
+const STORE_DESTINATIONS_NAME = `${STORE_DESTINATIONS_PREFIX}-${STORE_VER}`;
 
 const api = new API(END_POINT, AUTHORIZATION);
-const store = new Store(STORE_NAME, window.localStorage);
-const apiWithProvider = new Provider(api, store);
+const storePoints = new Store(STORE_POINTS_NAME, window.localStorage);
+const storeOffers = new Store(STORE_OFFERS_NAME, window.localStorage);
+const storeDestinations = new Store(STORE_DESTINATIONS_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, storePoints, storeOffers, storeDestinations);
 
 const pointsModel = new PointsModel();
 let tripController = null;
