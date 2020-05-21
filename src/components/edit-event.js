@@ -2,6 +2,7 @@ import {TYPE, ARRIVAL} from "../const.js";
 import {formatDateTime, getDescription, getPhotos, getOffersByType} from "../utils/common.js";
 import {models} from "../models/index.js";
 import {Mode} from "../controllers/point.js";
+import {createElement} from "../utils/render.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import flatpickr from "flatpickr";
 import {encode} from "he";
@@ -432,6 +433,70 @@ export default class EventEdit extends AbstractSmartComponent {
     });
   }
 
+  _rerenderDestinationInformation() {
+    const allDestinations = models.destinations.slice().map((item) => item.name);
+
+    const eventDetailsElement = this.getElement().querySelector(`.event__details`);
+    const eventDestinationElement = this.getElement().querySelector(`.event__section--destination`);
+
+    if (allDestinations.includes(this._destination)) {
+      const createInformation = () => {
+        const description = this._informationDescription;
+        const createPhotos = () => {
+          if (isOnline()) {
+            const photos = this._informationPhotos;
+            return photos.map((item) => {
+              return (
+                `<img class="event__photo" src="${item.src}" alt="Event photo">`
+              );
+            }).join(`\n`);
+          } else {
+            return (``);
+          }
+        };
+        return (
+          `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
+          <p class="event__destination-description">${description}</p>
+
+          <div class="event__photos-container">
+            <div class="event__photos-tape">
+              ${createPhotos()}
+            </div>
+          </div>`
+        );
+      };
+
+      if (!eventDetailsElement) {
+        const eventDetailsTemplate = `<section class="event__details">
+            <section class="event__section  event__section--destination">
+            ${createInformation()}
+            </section>
+          </section>`;
+        this.getElement().querySelector(`form`).append(createElement(eventDetailsTemplate));
+      } if (eventDetailsElement && eventDestinationElement) {
+        eventDestinationElement.innerHTML = createInformation();
+      } else if (eventDetailsElement && !eventDestinationElement) {
+        const eventDestinationTemplate = `<section class="event__section  event__section--destination">${createInformation()}</section>`;
+        eventDetailsElement.append(createElement(eventDestinationTemplate));
+      }
+    } else {
+      if (!eventDetailsElement) {
+        return;
+      } else {
+        if (!eventDestinationElement) {
+          return;
+        } else {
+          const eventOffersElement = eventDetailsElement.querySelector(`.event__available-offers`);
+          if (eventOffersElement) {
+            eventDestinationElement.remove();
+          } else {
+            eventDetailsElement.remove();
+          }
+        }
+      }
+    }
+  }
+
   _subscribeOnEvents() {
     const element = this.getElement();
 
@@ -445,7 +510,6 @@ export default class EventEdit extends AbstractSmartComponent {
     });
 
     const destination = element.querySelector(`.event__input--destination`);
-    const oldDestination = destination.value;
     destination.addEventListener(`invalid`, () => {
       if (destination.validity.patternMismatch) {
         destination.setCustomValidity(`Please, select a city from the list`);
@@ -456,11 +520,13 @@ export default class EventEdit extends AbstractSmartComponent {
       }
     });
     destination.addEventListener(`change`, () => {
+      const oldDestination = this._destination;
       this._destination = destination.value.trim();
       if (oldDestination !== this._destination) {
         this._informationDescription = getDescription(this._destination);
         this._informationPhotos = getPhotos(this._destination);
-        this.rerender();
+        this._rerenderDestinationInformation();
+        // this.rerender();
       }
     });
 
