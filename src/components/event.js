@@ -14,39 +14,6 @@ const createEventTemplate = (event) => {
   const destinationName = encode(destination.name);
   const priceValue = encode(String(price));
 
-  // const createOffers = () => {
-  //   if (offers.length > 0) {
-  //     let checkedOffers = offers.slice().filter((item) => item.isChecked === true);
-  //     if (checkedOffers.length > 0 && checkedOffers.length <= 3) {
-  //       checkedOffers = checkedOffers.map((item) => {
-  //         return (`
-  //                    <li class="event__offer">
-  //            <span class="event__offer-title">${item.title}</span>
-  //            &plus;
-  //            &euro;&nbsp;<span class="event__offer-price">${item.price}</span>
-  //           </li>
-  //         `);
-  //       }).join(`\n`);
-  //       return checkedOffers;
-  //     } else if (checkedOffers.length > 3) {
-  //       checkedOffers = checkedOffers.slice(0, 3).map((item) => {
-  //         return (`
-  //                    <li class="event__offer">
-  //            <span class="event__offer-title">${item.title}</span>
-  //            &plus;
-  //            &euro;&nbsp;<span class="event__offer-price">${item.price}</span>
-  //           </li>
-  //         `);
-  //       }).join(`\n`);
-  //       return checkedOffers;
-  //     } else {
-  //       return (``);
-  //     }
-  //   } else {
-  //     return (``);
-  //   }
-  // };
-
   const createOffers = () => {
     if (offers.length > 0) {
       if (offers.length > 0 && offers.length <= 3) {

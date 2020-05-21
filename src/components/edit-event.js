@@ -7,14 +7,9 @@ import flatpickr from "flatpickr";
 import {encode} from "he";
 import "flatpickr/dist/flatpickr.min.css";
 
-// const isValidDestination = (destination) => {
-//   if (destination.length > 0) {
-//     destination = destination[0].toUpperCase() + destination.slice(1);
-//     return DESTINATION.includes(destination);
-//   } else {
-//     return false;
-//   }
-// };
+const isOnline = () => {
+  return window.navigator.onLine;
+};
 
 const DefaultData = {
   deleteButtonText: `Delete`,
@@ -31,7 +26,6 @@ const createEventEditTemplate = (event, options = {}) => {
   const startTime = formatDateTime(startDate);
   const endTime = formatDateTime(endDate);
   const favoriteAttribute = isFavorite ? `checked` : ``;
-  // const saveButtonDisabletAttribute = isValidDestination(destination) ? `` : `disabled`;
   const destinationValue = encode(destination.name);
   const priceValue = encode(String(price));
 
@@ -88,7 +82,6 @@ const createEventEditTemplate = (event, options = {}) => {
     );
   };
 
-  // let offersList = OFFERS.slice().filter((item) => item.type === type)[0].offers;
   let offersList = getOffersByType(type);
   const createOffers = () => {
     const getIdName = (offer) => {
@@ -129,6 +122,27 @@ const createEventEditTemplate = (event, options = {}) => {
             </div>
           </section>`
       );
+    } else if (offersList.length === 0 && checkedOffers.length > 0) {
+      offersList = offers.map((item) => {
+        return (
+          `<div class="event__offer-selector">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getIdName(item.title)}-1" type="checkbox" name="event-offer-${getIdName(item.title)}" checked>
+            <label class="event__offer-label" for="event-offer-${getIdName(item.title)}-1">
+              <span class="event__offer-title">${item.title}</span>
+              &plus;
+              &euro;&nbsp;<span class="event__offer-price">${item.price}</span>
+            </label>
+          </div>`
+        );
+      }).join(`\n`);
+      return (
+        `<section class="event__section  event__section--offers">
+            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+            <div class="event__available-offers">
+            ${offersList}
+            </div>
+          </section>`
+      );
     } else {
       return (``);
     }
@@ -140,12 +154,16 @@ const createEventEditTemplate = (event, options = {}) => {
     if (allDestinations.includes(destination.name)) {
       const description = destination.description;
       const createPhotos = () => {
-        const photos = destination.pictures;
-        return photos.map((item) => {
-          return (
-            `<img class="event__photo" src="${item.src}" alt="Event photo">`
-          );
-        }).join(`\n`);
+        if (isOnline()) {
+          const photos = destination.pictures;
+          return photos.map((item) => {
+            return (
+              `<img class="event__photo" src="${item.src}" alt="Event photo">`
+            );
+          }).join(`\n`);
+        } else {
+          return (``);
+        }
       };
       return (
         `<section class="event__section  event__section--destination">

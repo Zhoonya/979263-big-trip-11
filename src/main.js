@@ -1,4 +1,5 @@
 import API from "./api/index.js";
+import ErrorComponent from "./components/error.js";
 import Provider from "./api/provider.js";
 import Store from "./api/store.js";
 import SiteMenuComponent, {MenuItem} from "./components/site-menu.js";
@@ -76,18 +77,6 @@ const renderApp = () => {
   });
 };
 
-
-// api.getOffers()
-//   .then((offers) => {
-//     models.offers = offers;
-//     renderApp();
-//     api.getPoints()
-//       .then((points) => {
-//         pointsModel.setPoints(points);
-//         tripController.render();
-//       });
-//   });
-
 Promise.all([apiWithProvider.getPoints(), apiWithProvider.getOffers(), apiWithProvider.getDestinations()])
   .then((response) => {
     models.offers = response[1];
@@ -96,6 +85,10 @@ Promise.all([apiWithProvider.getPoints(), apiWithProvider.getOffers(), apiWithPr
     pointsModel.setPoints(response[0]);
     renderApp();
     tripController.render();
+  })
+  .catch(() => {
+    const errorComponent = new ErrorComponent();
+    render(document.querySelector(`.trip-events`), errorComponent, RenderPosition.BEFOREEND);
   });
 
 window.addEventListener(`load`, () => {

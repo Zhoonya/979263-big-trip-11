@@ -55,29 +55,9 @@ export default class API {
 
   getOffers() {
     return this._load({url: `offers`})
-      .then((response) => response.json());
+      .then((response) => response.json())
+      .catch(() => []);
   }
-
-  // async getOffers() {
-  //   const headers = new Headers();
-  //   headers.append(`Authorization`, this._authorization);
-  //
-  //   let res = await fetch(`https://11.ecmascript.pages.academy/big-trip/offers`, {headers});
-  //   res = checkStatus(res);
-  //   return await res.json();
-  // }
-
-  // getOffers() {
-  //   const headers = new Headers();
-  //   headers.append(`Authorization`, this._authorization);
-  //
-  //   return fetch(`https://11.ecmascript.pages.academy/big-trip/offers`, {headers})
-  //     .then(checkStatus)
-  //     .then((response) => response.json())
-  //     .then((response) => {
-  //       return response;
-  //     });
-  // }
 
   getDestinations() {
     return this._load({url: `destinations`})

@@ -4,7 +4,6 @@ import EventComponent from "../components/event.js";
 import EditEventComponent from "../components/edit-event.js";
 import PointModel from "../models/point.js";
 import {TYPE} from "../const.js";
-// import PointsModel from "../models/points";
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
@@ -90,7 +89,6 @@ export default class PointController {
     this._editEventComponent.setFavoritesButtonClickHandler(() => {
       const newPoint = PointModel.clone(event);
       newPoint.isFavorite = !newPoint.isFavorite;
-      // this._onDataChange(this, event, newPoint);
       this._onFavoriteChange(this, event, newPoint);
     });
     this._editEventComponent.setSubmitHandler((evt) => {
@@ -124,7 +122,6 @@ export default class PointController {
         if (oldEventEditComponent && oldEventComponent) {
           replace(this._eventComponent, oldEventComponent);
           replace(this._editEventComponent, oldEventEditComponent);
-          // this._replaceEditToEvent();
         } else {
           render(this._container, this._editEventComponent, RenderPosition.BEFOREEND);
         }

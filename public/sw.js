@@ -12,6 +12,11 @@ self.addEventListener(`install`, (evt) => {
           `/bundle.js`,
           `/css/style.css`,
           `https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800&display=swap`,
+          `https://fonts.gstatic.com/s/montserrat/v14/JTURjIg1_i6t8kCHKm45_ZpC3gnD_g.woff2`,
+          `https://fonts.gstatic.com/s/montserrat/v14/JTURjIg1_i6t8kCHKm45_c5H3gnD_g.woff2`,
+          `https://fonts.gstatic.com/s/montserrat/v14/JTUSjIg1_i6t8kCHKm459Wlhyw.woff2`,
+          `https://fonts.gstatic.com/s/montserrat/v14/JTURjIg1_i6t8kCHKm45_bZF3gnD_g.woff2`,
+          `https://fonts.gstatic.com/s/montserrat/v14/JTURjIg1_i6t8kCHKm45_dJE3gnD_g.woff2`,
           `/img/icons/bus.png`,
           `/img/icons/check-in.png`,
           `/img/icons/drive.png`,
@@ -32,21 +37,14 @@ self.addEventListener(`install`, (evt) => {
 
 self.addEventListener(`activate`, (evt) => {
   evt.waitUntil(
-    // Получаем все названия кэшей
     caches.keys()
       .then(
-        // Перебираем их и составляем набор промисов на удаление
         (keys) => Promise.all(
           keys.map(
             (key) => {
-              // Удаляем только те кэши,
-              // которые начинаются с нашего префикса,
-              // но не совпадают по версии
               if (key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME) {
                 return caches.delete(key);
               }
-
-              // Остальные не обрабатываем
               return null;
             })
             .filter((key) => key !== null)
@@ -61,35 +59,19 @@ self.addEventListener(`fetch`, (evt) => {
   evt.respondWith(
     caches.match(request)
       .then((cacheResponse) => {
-        // Если в кэше нашёлся ответ на запрос (request),
-        // возвращаем его (cacheResponse) вместо запроса к серверу
         if (cacheResponse) {
           return cacheResponse;
         }
-
-        // Если в кэше не нашёлся ответ,
-        // повторно вызываем fetch
-        // с тем же запросом (request),
-        // и возвращаем его
         return fetch(request)
           .then((response) => {
-            // Если ответа нет, или ответ со статусом отличным от 200 OK,
-            // или ответ небезопасного типа (не basic), тогда просто передаём
-            // ответ дальше, никак не обрабатываем
             if (!response || response.status !== 200 || response.type !== `basic`) {
               return response;
             }
-
-            // А если ответ удовлетворяет всем условиям, клонируем его
             const clonedResponse = response.clone();
-
-            // Копию кладём в кэш
             caches.open(CACHE_NAME)
               .then((cache) => {
                 cache.put(request, clonedResponse);
               });
-
-            // Оригинал передаём дальше
             return response;
           });
       })

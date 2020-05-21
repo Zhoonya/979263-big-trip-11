@@ -6,7 +6,6 @@ const getFilterNameById = (id) => {
   return id.substring(FILTER_ID_PREFIX.length);
 };
 
-
 const createFilterMarkup = (filter, isChecked) => {
   const {name} = filter;
 
