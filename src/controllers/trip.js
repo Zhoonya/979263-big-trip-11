@@ -100,7 +100,6 @@ export default class TripController {
   _onFavoriteChange(pointController, oldData, newData) {
     this._api.updatePoint(oldData.id, newData)
       .then((pointModel) => {
-        this._pointsModel.updatePoint(oldData.id, newData);
         const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
         if (isSuccess) {
           pointController.render(pointModel, PointControllerMode.EDIT);
