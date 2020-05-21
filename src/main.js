@@ -65,13 +65,17 @@ const renderApp = () => {
         siteMenuComponent.setActiveItem(MenuItem.TABLE);
         statsContainer.hide();
         tripController.show();
-        newEventButtonComponent.removeDisabled();
+        filterController.show();
+        newEventButtonComponent.show();
+        // newEventButtonComponent.removeDisabled();
         break;
       case MenuItem.STATS:
         siteMenuComponent.setActiveItem(MenuItem.STATS);
         tripController.hide();
+        filterController.hide();
+        newEventButtonComponent.hide();
         statsContainer.show(pointsModel.getPointsAll());
-        newEventButtonComponent.addDisabled();
+        // newEventButtonComponent.addDisabled();
         break;
     }
   });

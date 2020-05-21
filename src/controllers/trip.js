@@ -70,7 +70,6 @@ export default class TripController {
     });
 
     this._container.classList.remove(HIDDEN_CLASS);
-
     this._updatePoints();
   }
 
@@ -170,6 +169,12 @@ export default class TripController {
   }
 
   _onSortTypeChange(sortType) {
+    const newEventButton = document.querySelector(`.trip-main__event-add-btn`);
+    if (newEventButton.disabled) {
+      this._creatingPoint = null;
+      newEventButton.removeAttribute(`disabled`);
+    }
+
     const sortedEvents = getSortedEvents(this._pointsModel.getPoints(), sortType);
 
     this._tripDaysListComponent.getElement().innerHTML = ``;

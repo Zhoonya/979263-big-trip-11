@@ -41,6 +41,14 @@ export default class FilterController {
     }
   }
 
+  show() {
+    this._filterComponent.show();
+  }
+
+  hide() {
+    this._filterComponent.hide();
+  }
+
   setDefaultFilter() {
     this._filterComponent.getElement().querySelector(`#filter--everything`).checked = true;
     this._onFilterChange(FilterType.EVERYTHING);

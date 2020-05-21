@@ -24,4 +24,12 @@ export default class NewEventButton extends AbstractComponent {
   removeDisabled() {
     this.getElement().disabled = false;
   }
+
+  hide() {
+    this.getElement().classList.add(`visually-hidden`);
+  }
+
+  show() {
+    this.getElement().classList.remove(`visually-hidden`);
+  }
 }

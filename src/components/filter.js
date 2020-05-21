@@ -48,6 +48,14 @@ export default class Filter extends AbstractComponent {
       handler(filterName);
     });
   }
+
+  hide() {
+    this.getElement().classList.add(`visually-hidden`);
+  }
+
+  show() {
+    this.getElement().classList.remove(`visually-hidden`);
+  }
 }
 
 
