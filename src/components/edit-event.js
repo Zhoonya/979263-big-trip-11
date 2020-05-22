@@ -547,7 +547,7 @@ export default class EventEdit extends AbstractSmartComponent {
     const offersCheckboxes = element.querySelectorAll(`.event__offer-checkbox`);
     offersCheckboxes.forEach((item) => {
       item.addEventListener(`change`, () => {
-        let offers = Array.from(element.querySelectorAll(`.event__offer-selector`));
+        const offers = Array.from(element.querySelectorAll(`.event__offer-selector`));
         if (offers.length > 0) {
           this._offers = offers.filter((offer) => offer.querySelector(`.event__offer-checkbox`).checked).map((offer) => {
             return {
