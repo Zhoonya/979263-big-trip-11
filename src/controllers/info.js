@@ -1,7 +1,7 @@
 import TripInfoComponent from "../components/trip-info.js";
 import TripInfoCostComponent from "../components/trip-info-cost.js";
 import {render, RenderPosition} from "../utils/render.js";
-import {MONTH} from "../const.js";
+import {MONTHS} from "../const.js";
 import {remove} from "../utils/render";
 
 export default class InfoController {
@@ -81,8 +81,8 @@ export default class InfoController {
     points.sort((a, b) => a.startDate - b.startDate);
 
     if (points.length > 0) {
-      const startDate = `${MONTH[points[0].startDate.getMonth()]} ${points[0].startDate.getDate()}`;
-      const endDate = `&nbsp;&mdash;&nbsp;${MONTH[points[points.length - 1].endDate.getMonth()]} ${new Date(points[points.length - 1].endDate).getDate()}`;
+      const startDate = `${MONTHS[points[0].startDate.getMonth()]} ${points[0].startDate.getDate()}`;
+      const endDate = `&nbsp;&mdash;&nbsp;${MONTHS[points[points.length - 1].endDate.getMonth()]} ${new Date(points[points.length - 1].endDate).getDate()}`;
       return (`${startDate}${endDate}`);
     } else {
       return (``);

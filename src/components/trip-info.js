@@ -13,7 +13,7 @@ const createTripInfoTemplate = (dates, events) => {
   );
 };
 
-export default class TripDay extends AbstractComponent {
+export default class TripInfo extends AbstractComponent {
   constructor(dates, events) {
     super();
 

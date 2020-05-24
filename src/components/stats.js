@@ -1,5 +1,5 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {HIDDEN_CLASS, TRANSPORT} from "../const.js";
+import {HIDDEN_CLASS, TRANSPORTS} from "../const.js";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {render, RenderPosition} from "../utils/render.js";
@@ -7,8 +7,8 @@ import {formatDuration} from "../utils/common.js";
 
 const BAR_HEIGHT = 55;
 
-const getUniqItems = (item, index, array) => {
-  return array.indexOf(item) === index;
+const getUniqItems = (item, index, items) => {
+  return items.indexOf(item) === index;
 };
 
 const renderMoneyChart = (moneyCtx, points) => {
@@ -98,7 +98,7 @@ const renderTransportChart = (transportCtx, points) => {
 
   const allTransports = points
     .map((it) => it.type)
-    .filter((it) => TRANSPORT.includes(it));
+    .filter((it) => TRANSPORTS.includes(it));
 
   const labels = allTransports
     .map((point) => point.toUpperCase())

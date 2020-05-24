@@ -2,9 +2,9 @@ import {FilterType} from "../const.js";
 
 export const getPastPoints = (points, nowDate) => {
   return points.filter((point) => {
-    return point.endDate.getDate() < nowDate.getDate() &&
-      point.endDate.getMonth() <= nowDate.getMonth() &&
-      point.endDate.getFullYear() <= nowDate.getFullYear();
+    return point.endDate.getDate() < nowDate.getDate() ||
+      point.endDate.getMonth() < nowDate.getMonth() ||
+      point.endDate.getFullYear() < nowDate.getFullYear();
   });
 };
 

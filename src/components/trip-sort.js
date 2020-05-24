@@ -32,7 +32,7 @@ export const createTripSortTemplate = () => {
   );
 };
 
-export default class SiteMenu extends AbstractComponent {
+export default class TripSort extends AbstractComponent {
   constructor() {
     super();
 

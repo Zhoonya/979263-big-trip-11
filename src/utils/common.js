@@ -61,3 +61,7 @@ export const getPhotos = (destination) => {
     return [];
   }
 };
+
+export const getUniqueItems = (items) => {
+  return Array.from(new Set(items));
+};

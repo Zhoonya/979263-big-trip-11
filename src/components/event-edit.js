@@ -1,4 +1,4 @@
-import {TYPE, ARRIVAL} from "../const.js";
+import {TYPES, ARRIVAL} from "../const.js";
 import {formatDateTime, getDescription, getPhotos, getOffersByType} from "../utils/common.js";
 import {models} from "../models/index.js";
 import {Mode} from "../controllers/point.js";
@@ -59,14 +59,14 @@ const createEventEditTemplate = (event, options = {}) => {
         </div>`);
     };
 
-    const transferList = () => {
-      return TYPE.slice().filter((item) => {
+    const getTransferList = () => {
+      return TYPES.slice().filter((item) => {
         return !ARRIVAL.has(item);
       }).map((item) => getTypesListTemplate(item)).join(`\n`);
     };
 
-    const activityList = () => {
-      return TYPE.slice().filter((item) => {
+    const getActivityList = () => {
+      return TYPES.slice().filter((item) => {
         return ARRIVAL.has(item);
       }).map((item) => getTypesListTemplate(item)).join(`\n`);
     };
@@ -74,11 +74,11 @@ const createEventEditTemplate = (event, options = {}) => {
     return (
       `<fieldset class="event__type-group">
         <legend class="visually-hidden">Transfer</legend>
-        ${transferList()}
+        ${getTransferList()}
       </fieldset>
       <fieldset class="event__type-group">
         <legend class="visually-hidden">Activity</legend>
-        ${activityList()}
+        ${getActivityList()}
       </fieldset>`
     );
   };

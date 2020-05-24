@@ -1,9 +1,9 @@
 import {render, remove, RenderPosition, replace} from "../utils/render.js";
 import {getDescription, getPhotos} from "../utils/common.js";
 import EventComponent from "../components/event.js";
-import EditEventComponent from "../components/edit-event.js";
+import EditEventComponent from "../components/event-edit.js";
 import PointModel from "../models/point.js";
-import {TYPE} from "../const.js";
+import {TYPES} from "../const.js";
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
@@ -14,7 +14,7 @@ export const Mode = {
 };
 
 export const EmptyPoint = {
-  type: TYPE[0],
+  type: TYPES[0],
   destination: {
     name: ``,
     description: ``,

@@ -4,9 +4,29 @@ import TripSortComponent, {SortType} from "../components/trip-sort.js";
 import TripDaysListComponent from "../components/trip-days-list.js";
 import TripDayComponent from "../components/trip-day.js";
 import PointController, {Mode as PointControllerMode, EmptyPoint} from "./point.js";
-import {getListOfDates} from "../mock/trip-day.js";
 import {HIDDEN_CLASS} from "../const.js";
 import {getPointsByFilter} from "../utils/filter.js";
+import {formatYearMonthDate, getUniqueItems} from "../utils/common.js";
+
+const sortAscending = (a, b) => {
+  if (a > b) {
+    return 1;
+  } else if (a === b) {
+    return 0;
+  } else {
+    return -1;
+  }
+};
+
+const getListOfDates = (events) => {
+  let dates = events.map((item) => {
+    const date = item.startDate;
+    return formatYearMonthDate(date);
+  });
+  dates = dates.sort(sortAscending);
+  dates = getUniqueItems(dates);
+  return dates;
+};
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = [];
