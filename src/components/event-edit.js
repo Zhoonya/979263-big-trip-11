@@ -91,29 +91,17 @@ const createEventEditTemplate = (event, options = {}) => {
     const checkedOffers = offers.map((item) => item.title);
     if (offersList.length > 0) {
       offersList = offersList.map((item) => {
-        if (checkedOffers.includes(item.title)) {
-          return (
-            `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getIdName(item.title)}-1" type="checkbox" name="event-offer-${getIdName(item.title)}" checked>
+        const checkedAttribute = checkedOffers.includes(item.title) ? `checked` : ``;
+        return (
+          `<div class="event__offer-selector">
+            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getIdName(item.title)}-1" type="checkbox" name="event-offer-${getIdName(item.title)}" ${checkedAttribute}>
             <label class="event__offer-label" for="event-offer-${getIdName(item.title)}-1">
               <span class="event__offer-title">${item.title}</span>
               &plus;
               &euro;&nbsp;<span class="event__offer-price">${item.price}</span>
             </label>
           </div>`
-          );
-        } else {
-          return (
-            `<div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getIdName(item.title)}-1" type="checkbox" name="event-offer-${getIdName(item.title)}">
-              <label class="event__offer-label" for="event-offer-${getIdName(item.title)}-1">
-                <span class="event__offer-title">${item.title}</span>
-                &plus;
-              &euro;&nbsp;<span class="event__offer-price">${item.price}</span>
-            </label>
-          </div>`
-          );
-        }
+        );
       }).join(`\n`);
       return (
         `<section class="event__section  event__section--offers">
@@ -235,7 +223,7 @@ const createEventEditTemplate = (event, options = {}) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${priceValue}" required pattern="[1-9]{1}[0-9]{1,6}|0">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${priceValue}" required pattern="[1-9]{1}[0-9]{0,6}|0">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
           <button class="event__reset-btn" type="reset">${deleteButtonText}</button>

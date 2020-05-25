@@ -107,6 +107,25 @@ export default class TripController {
     this._renderEventsByDays();
   }
 
+  createPoint() {
+    if (this._creatingPoint) {
+      return;
+    }
+
+    if (this._pointControllers.length === 0) {
+      render(this._container, this._tripDaysListComponent, RenderPosition.BEFOREEND);
+      remove(this._noEventsComponent);
+      this._noEventsComponent = null;
+    }
+
+    const tripDaysListElement = this._tripDaysListComponent.getElement();
+
+    this._creatingPoint = new PointController(tripDaysListElement, this._onDataChange, this._onViewChange, this._infoController, this._onFavoriteChange);
+
+    this._creatingPoint.render(EmptyPoint, PointControllerMode.ADDING);
+    this._pointControllers = this._pointControllers.concat(this._creatingPoint);
+  }
+
   _onViewChange() {
     this._pointControllers.forEach((item) => {
       if (item.removeAddingPoint()) {
@@ -246,25 +265,6 @@ export default class TripController {
     const tripEventsList = tripDayComponent.getElement().querySelector(`.trip-events__list`);
     const points = renderEvents(sortedEvents, tripEventsList, this._onDataChange, this._onViewChange, this._infoController, this._onFavoriteChange);
     this._pointControllers = points;
-  }
-
-  createPoint() {
-    if (this._creatingPoint) {
-      return;
-    }
-
-    if (this._pointControllers.length === 0) {
-      render(this._container, this._tripDaysListComponent, RenderPosition.BEFOREEND);
-      remove(this._noEventsComponent);
-      this._noEventsComponent = null;
-    }
-
-    const tripDaysListElement = this._tripDaysListComponent.getElement();
-
-    this._creatingPoint = new PointController(tripDaysListElement, this._onDataChange, this._onViewChange, this._infoController, this._onFavoriteChange);
-
-    this._creatingPoint.render(EmptyPoint, PointControllerMode.ADDING);
-    this._pointControllers = this._pointControllers.concat(this._creatingPoint);
   }
 
   _removePoints() {

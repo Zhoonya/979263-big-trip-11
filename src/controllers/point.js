@@ -63,7 +63,7 @@ export default class PointController {
     this._container = container;
     this._eventComponent = null;
     this._editEventComponent = null;
-    this._handleKeyDown = this._handleKeyDown.bind(this);
+    this._onEscKeyDown = this._onEscKeyDown.bind(this);
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
     this._mode = Mode.DEFAULT;
@@ -84,7 +84,7 @@ export default class PointController {
 
     this._eventComponent.setOpenButtonClickHandler(() => {
       this._replaceEventToEdit();
-      document.addEventListener(`keydown`, this._handleKeyDown);
+      document.addEventListener(`keydown`, this._onEscKeyDown);
     });
     this._editEventComponent.setFavoritesButtonClickHandler(() => {
       const newPoint = PointModel.clone(event);
@@ -102,7 +102,7 @@ export default class PointController {
       this._infoController.addLoadingStatus();
       this.blockForm();
       this._onDataChange(this, event, data);
-      document.removeEventListener(`keydown`, this._handleKeyDown);
+      document.removeEventListener(`keydown`, this._onEscKeyDown);
     });
     this._editEventComponent.setDeleteButtonClickHandler(() => {
       this._editEventComponent.setData({
@@ -114,7 +114,7 @@ export default class PointController {
     this._editEventComponent.setCloseButtonClickHandler((evt) => {
       evt.preventDefault();
       this._replaceEditToEvent();
-      document.removeEventListener(`keydown`, this._handleKeyDown);
+      document.removeEventListener(`keydown`, this._onEscKeyDown);
     });
 
     switch (mode) {
@@ -141,7 +141,7 @@ export default class PointController {
           remove(oldEventComponent);
         }
         this._onViewChange();
-        document.addEventListener(`keydown`, this._handleKeyDown);
+        document.addEventListener(`keydown`, this._onEscKeyDown);
         render(this._container, this._editEventComponent, RenderPosition.AFTERBEGIN);
         const editEventForm = this._editEventComponent.getElement().querySelector(`.event--edit`);
         editEventForm.classList.add(`trip-events__item`);
@@ -170,15 +170,15 @@ export default class PointController {
       }
 
       return true;
-    } else {
-      return false;
     }
+
+    return false;
   }
 
   destroy() {
     remove(this._editEventComponent);
     remove(this._eventComponent);
-    document.removeEventListener(`keydown`, this._handleKeyDown);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   getEditEventComponent() {
@@ -214,7 +214,7 @@ export default class PointController {
   }
 
   _replaceEditToEvent() {
-    document.removeEventListener(`keydown`, this._handleKeyDown);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
     this._editEventComponent.reset();
     if (document.contains(this._editEventComponent.getElement())) {
       replace(this._eventComponent, this._editEventComponent);
@@ -223,7 +223,7 @@ export default class PointController {
 
   }
 
-  _handleKeyDown(evt) {
+  _onEscKeyDown(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
@@ -231,7 +231,7 @@ export default class PointController {
         this._onDataChange(this, EmptyPoint, null);
       }
       this._replaceEditToEvent();
-      document.removeEventListener(`keydown`, this._handleKeyDown);
+      document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   }
 }
