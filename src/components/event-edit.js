@@ -1,4 +1,4 @@
-import {TYPES, ARRIVAL} from "../const.js";
+import {TYPES, ACTIVITIES} from "../const.js";
 import {formatDateTime, getDescription, getPhotos, getOffersByType} from "../utils/common.js";
 import {models} from "../models/index.js";
 import {Mode} from "../controllers/point.js";
@@ -23,7 +23,7 @@ const createEventEditTemplate = (event, options = {}) => {
   const {type, offers, destination, startDate, endDate, price, externalData} = options;
 
   const eventTitle = type[0].toUpperCase() + type.slice(1);
-  const preposition = ARRIVAL.has(type) ? `in` : `to`;
+  const preposition = ACTIVITIES.has(type) ? `in` : `to`;
   const startTime = formatDateTime(startDate);
   const endTime = formatDateTime(endDate);
   const favoriteAttribute = isFavorite ? `checked` : ``;
@@ -61,13 +61,13 @@ const createEventEditTemplate = (event, options = {}) => {
 
     const getTransferList = () => {
       return TYPES.slice().filter((item) => {
-        return !ARRIVAL.has(item);
+        return !ACTIVITIES.has(item);
       }).map((item) => getTypesListTemplate(item)).join(`\n`);
     };
 
     const getActivityList = () => {
       return TYPES.slice().filter((item) => {
-        return ARRIVAL.has(item);
+        return ACTIVITIES.has(item);
       }).map((item) => getTypesListTemplate(item)).join(`\n`);
     };
 
@@ -514,7 +514,6 @@ export default class EventEdit extends AbstractSmartComponent {
         this._informationDescription = getDescription(this._destination);
         this._informationPhotos = getPhotos(this._destination);
         this._rerenderDestinationInformation();
-        // this.rerender();
       }
     });
 

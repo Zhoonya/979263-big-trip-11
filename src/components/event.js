@@ -1,4 +1,4 @@
-import {ARRIVAL} from "../const.js";
+import {ACTIVITIES} from "../const.js";
 import {formatTime, formatDuration} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 import {encode} from "he";
@@ -7,7 +7,7 @@ import {encode} from "he";
 const createEventTemplate = (event) => {
   const {type, destination, price, offers, startDate, endDate} = event;
   const eventTitle = type[0].toUpperCase() + type.slice(1);
-  const preposition = ARRIVAL.has(type) ? `in` : `to`;
+  const preposition = ACTIVITIES.has(type) ? `in` : `to`;
   const startTime = formatTime(startDate);
   const endTime = formatTime(endDate);
   const duration = formatDuration(endDate - startDate);

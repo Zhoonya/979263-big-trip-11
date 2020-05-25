@@ -48,18 +48,16 @@ export const getDescription = (destination) => {
   const filteredDestination = models.destinations.slice().filter((item) => item.name === destination)[0];
   if (filteredDestination !== undefined) {
     return filteredDestination.description;
-  } else {
-    return ``;
   }
+  return ``;
 };
 
 export const getPhotos = (destination) => {
   const filteredDestination = models.destinations.slice().filter((item) => item.name === destination)[0];
   if (filteredDestination !== undefined) {
     return filteredDestination.pictures;
-  } else {
-    return [];
   }
+  return [];
 };
 
 export const getUniqueItems = (items) => {
